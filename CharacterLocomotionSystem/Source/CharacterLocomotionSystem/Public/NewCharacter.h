@@ -85,6 +85,7 @@ public:
 #pragma region Overrided
 
 	virtual void RecalculateBaseEyeHeight() override;
+	virtual void OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust);
 
 #pragma endregion
 
@@ -312,65 +313,88 @@ public:
 #pragma region AdvancedMovement
 
 	/**
- * Retrieves the advanced movement data asset associated with this character.
- * This function provides access to custom movement parameters that may affect
- * advanced movement capabilities. Currently, this function does not perform any
- * specific actions and is intended for future implementations.
- *
- * @return Pointer to the UAdvancedMovementPrimaryDataAsset instance.
- */
+	 * Retrieves the custom advanced movement data asset associated with this character.
+	 * Provides access to configurable parameters that influence advanced movement
+	 * capabilities, allowing flexibility in custom movement behaviors.
+	 * This function is a BlueprintNativeEvent, meaning it can be overridden in
+	 * Blueprints for further customization.
+	 *
+	 * @return Pointer to a UAdvancedMovementPrimaryDataAsset instance if available;
+	 *         nullptr otherwise.
+	 */
 	UFUNCTION(BlueprintNativeEvent, Category = "Movement|Advanced")
 	UAdvancedMovementPrimaryDataAsset* GetCustomAdvancedMovementData() const;
 	UAdvancedMovementPrimaryDataAsset* GetCustomAdvancedMovementData_Implementation() const;
 
 	/**
 	 * Initiates custom advanced movement for the character.
-	 * This function checks the conditions and initiates the necessary changes
-	 * in character state to start the custom movement. Currently, it does not
-	 * perform any specific actions and is intended for future implementations.
+	 * This function assesses conditions and triggers necessary state changes to
+	 * activate custom movement logic. Intended as an entry point for advanced
+	 * movement, allowing for specialized gameplay mechanics to be added experimentally.
+	 * BlueprintNativeEvent allows this function to be customized in Blueprints.
 	 *
-	 * @return True if the advanced movement was successfully started; otherwise, false.
+	 * @return True if the custom movement initiation is successful, false otherwise.
 	 */
-	UFUNCTION(BlueprintNativeEvent, Category = "Movement|Advanced")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Movement|Advanced")
 	bool StartCustomAdvancedMovement();
 	bool StartCustomAdvancedMovement_Implementation();
 
 	/**
-	 * Stops the custom advanced movement for the character.
-	 * This function reverts the character's state back to normal movement mechanics.
-	 * Currently, it does not perform any specific actions and is intended for future implementations.
+	 * Terminates the character's custom advanced movement state.
+	 * This function restores the character's default movement behavior, effectively
+	 * ending any custom advanced movement logic. Ideal for cleanly reverting changes
+	 * made during custom movement. This function is designed for experimental use
+	 * as the custom movement system evolves.
 	 */
-	UFUNCTION(BlueprintNativeEvent, Category = "Movement|Advanced")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Movement|Advanced")
 	void StopCustomAdvancedMovement();
 	void StopCustomAdvancedMovement_Implementation();
 
 	/**
-	 * Performs custom physics calculations for advanced movement.
-	 * This function is called every frame to apply any necessary physics logic
-	 * related to custom movement mechanics. Currently, it does not perform any
-	 * specific actions and is intended for future implementations.
-	 *
-	 * @param deltaTime The time elapsed since the last frame.
-	 * @param Iterations The number of iterations to apply physics calculations.
+	 * Enters the character into a custom advanced movement state.
+	 * Intended for advanced movement sequences that require transitioning into
+	 * specialized movement behaviors, this function sets the necessary parameters
+	 * to begin custom movement mechanics. BlueprintNativeEvent enables experimental Blueprint-based overrides.
 	 */
-	UFUNCTION(BlueprintNativeEvent, Category = "Movement|Advanced")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Movement|Advanced")
+	void EnterCustomAdvancedMovement();
+	void EnterCustomAdvancedMovement_Implementation();
+
+	/**
+	 * Exits the character from a custom advanced movement state.
+	 * Used to end advanced movement and revert back to standard character movement
+	 * settings. This function ensures smooth transitions and proper state cleanup
+	 * for custom movement sequences. Ideal for adding logic for custom exit actions experimentally.
+	 */
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Movement|Advanced")
+	void ExitCustomAdvancedMovement();
+	void ExitCustomAdvancedMovement_Implementation();
+
+	/**
+	 * Executes custom physics calculations specific to advanced movement.
+	 * Called every frame, this function applies physics logic required by custom
+	 * movement mechanics, allowing for fine-tuned physics-based movement adjustments.
+	 * The deltaTime and iteration count enable granular control of the physics calculations.
+	 * BlueprintNativeEvent allows for detailed adjustments in Blueprint experimentally.
+	 *
+	 * @param deltaTime The time elapsed since the previous frame.
+	 * @param Iterations Number of physics calculation iterations to apply.
+	 */
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Movement|Advanced")
 	void CustomAdvancedMovementPhysics(float deltaTime, int32 Iterations);
 	void CustomAdvancedMovementPhysics_Implementation(float deltaTime, int32 Iterations);
 
 	/**
-	 * Checks whether the character is currently allowed to perform custom advanced movement.
-	 * This function evaluates relevant gameplay conditions to determine if
-	 * the movement is permissible. Currently, it does not perform any specific actions
-	 * and is intended for future implementations.
+	 * Determines if the character is permitted to initiate custom advanced movement.
+	 * This function evaluates gameplay-related conditions, checking if custom movement
+	 * is currently allowed. Useful for enforcing gameplay rules or restricting movement
+	 * based on situational factors. BlueprintNativeEvent for additional condition checks experimentally in Blueprints.
 	 *
-	 * @return True if custom advanced movement can be performed; otherwise, false.
+	 * @return True if custom advanced movement is allowed; false otherwise.
 	 */
-	UFUNCTION(BlueprintNativeEvent, Category = "Movement|Advanced")
+	UFUNCTION(BlueprintNativeEvent, BlueprintPure, Category = "Movement|Advanced")
 	bool CanCustomAdvancedMovement();
 	bool CanCustomAdvancedMovement_Implementation();
-
-
-
 
 #pragma region Vault
 	/**

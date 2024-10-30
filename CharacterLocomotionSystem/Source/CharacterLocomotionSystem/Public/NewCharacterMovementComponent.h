@@ -187,8 +187,13 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWallRunStart, FCurrentWallInfo, C
 /** Triggered when the character stops wall running. */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnWallRunStop);
 
-/** Triggered when the character starts dashing. */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDashStart);
+/**
+ * Triggered when the character starts dashing.
+ *
+ * @param TargetLocation The location to where the character is dashing towards.
+ */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDashStart, FVector, TargetLocation);
+
 
 /** Triggered when the character stops dashing. */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDashStop);
@@ -395,6 +400,10 @@ public:
 	virtual bool DoJump(bool bReplayingMoves);
 	virtual bool CanAttemptJump() const override;
 	virtual bool HandlePendingLaunch() override;
+	virtual float GetMaxSpeed() const override;
+	virtual float GetMaxAcceleration() const override;
+	virtual float GetMaxBrakingDeceleration() const override;
+
 	/**
 	 * Checks if the character is currently using a specified custom movement mode.
 	 *
@@ -487,8 +496,32 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "CharacterMovement|Special&Advanced")
 	void SetWallInfo(EWallSide NewWallSide, const FHitResult& NewWallHit);
 
+	/**
+	 * Retrieves the current angle of the floor relative to the character's up vector.
+	 * This function is useful for determining the slope of the terrain the character is currently standing on.
+	 *
+	 * @return The angle of the current floor in degrees.
+	 */
+	UFUNCTION(BlueprintPure, Category = "CharacterMovement")
+	float GetCurrentFloorAngle() const;
+
+	/**
+	 * Initiates fast movement for the character.
+	 * This function changes the character's movement parameters to enable a faster movement speed.
+	 *
+	 * Note: Ensure that any necessary checks (such as stamina or cooldowns) are handled before calling this function.
+	 */
 	UFUNCTION(Category = "CharacterMovement|Fast")
 	void StartFastMovement();
+
+	/**
+	 * Stops fast movement for the character.
+	 * This function resets the character's movement parameters back to their normal state,
+	 * effectively disabling the fast movement mode.
+	 *
+	 * Note: Ensure that this function is called when fast movement should no longer be active
+	 * to avoid unintended behavior or performance issues.
+	 */
 	UFUNCTION(Category = "CharacterMovement|Fast")
 	void StopFastMovement();
 
@@ -757,6 +790,14 @@ public:
 	void StopProne();
 
 	/**
+	 * Stops the prone movement for the character.
+	 * This function handles all necessary logic to transition the character
+	 * out of the prone state, restoring previous movement parameters.
+	 */
+	UFUNCTION(Category = "Character Movement:Prone")
+	bool WantsToProne();
+
+	/**
 	 * Retrieves the half height of the character when in a prone position.
 	 * This value is used for collision detection and navigation adjustments
 	 * when the character is prone.
@@ -800,6 +841,32 @@ public:
 	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Movement : Slide")
 	bool bCanSlide;
+
+	/**
+	 * Enables automatic sliding initiation based on specific conditions.
+	 * When enabled, the character will automatically enter a slide state under predefined criteria,
+	 * enhancing smooth and dynamic movement during gameplay.
+	 */
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Movement : Slide")
+	bool bCanAutoSlide;
+
+	/**
+	 * Minimum speed required for the character to initiate the sliding state.
+	 * This value ensures that the character has sufficient momentum to enter a slide,
+	 * enabling smoother transitions into sliding mechanics.
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Movement : Slide", meta = (EditCondition = "bCanSlide && bCanAutoSlide"))
+	float MinAutoSlideSpeed;
+
+	/**
+	 * Minimum angle required for the character to perform an auto slide.
+	 * This value specifies the threshold angle of the surface that allows the character
+	 * to seamlessly transition into the sliding state during gameplay.
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Movement : Slide", meta = (EditCondition = "bCanSlide && bCanAutoSlide", ClampMin = "0.0"))
+	float MinAutoSlideAngle;
+
 
 	/**
 	 * Minimum speed required for the character to enter the sliding state.
@@ -926,6 +993,16 @@ public:
 	 */
 	UFUNCTION(BlueprintPure, Category = "Character Movement|Slide")
 	bool CanSlide() const;
+
+	/**
+	 * Determines if the character meets all conditions for automatically initiating a slide.
+	 * This function evaluates factors such as ground angle, movement mode, and momentum to
+	 * decide if the character should start sliding without additional player input.
+	 *
+	 * @return True if the character can auto-slide based on current conditions; otherwise, false.
+	 */
+	UFUNCTION(BlueprintPure, Category = "Character Movement|Slide")
+	bool CanAutoSlide() const;
 
 	/**
 	 * Determines whether the character is currently in a sliding state.
@@ -1418,6 +1495,14 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Locomotion|Dash")
 	void GetDashLocation(FVector& OutTargetLocation, bool& bOutSuccess) const;
 
+	/**
+	 * Checks if the character can dash based on the current movement state.
+	 *
+	 * @return True if the character can dash; otherwise, false.
+	 */
+	UFUNCTION(Category = "Locomotion|Dash")
+	bool CanDashInCurrentState() const;
+
 
 #pragma endregion
 #pragma endregion
@@ -1674,7 +1759,63 @@ public:
 #pragma endregion
 
 #pragma region Functions
+	/**
+	 * Initiates custom advanced movement for the character.
+	 * This function activates advanced movement capabilities, setting up the character for specialized motion.
+	 */
+	UFUNCTION(Category = "Character Movement | Advanced")
+	void StartCustomAdvancedMovement();
+
+	/**
+	 * Ends the custom advanced movement for the character.
+	 * This function halts any ongoing advanced movement, returning the character to standard movement states.
+	 */
+	UFUNCTION(Category = "Character Movement | Advanced")
+	void StopCustomAdvancedMovement();
+
+	/**
+	 * Executes custom physics calculations for advanced movement.
+	 * Called during each tick to handle movement calculations, including applying forces and managing state updates
+	 * for advanced movement behavior.
+	 *
+	 * @param deltaTime The time elapsed since the last tick.
+	 * @param Iteration The current iteration of the movement update for precision in calculations.
+	 */
+	UFUNCTION(Category = "Character Movement | Advanced")
+	void PhysCustomAdvancedMovement(float deltaTime, int32 Iteration);
+
+	/**
+	 * Prepares the character for advanced movement initialization.
+	 * Sets up any prerequisites or initial configurations needed before starting advanced movement.
+	 */
+	UFUNCTION(Category = "Character Movement | Advanced")
+	void PreInitializeAdvancedMovement();
+
+	/**
+	 * Finalizes settings and configurations after advanced movement initialization.
+	 * Ensures that the character's advanced movement parameters are set correctly for seamless functionality.
+	 */
+	void PostInitializeAdvancedMovement();
+
+	/**
+	 * Plays a montage specific to advanced movement.
+	 * This function triggers a designated animation montage that aligns with the advanced movement state,
+	 * enhancing visual feedback and immersion.
+	 */
+	void PlayAdvancedMovementMontage();
+
+	/**
+	 * Called when an advanced movement montage ends.
+	 * Manages transitions and state updates when the animation montage completes, optionally handling interruptions.
+	 *
+	 * @param MontageToPlay The montage associated with the advanced movement that just ended.
+	 * @param bIsInterrupted Specifies whether the montage ended prematurely due to an interruption.
+	 */
+	void OnAdvancedMovementEnded(UAnimMontage* MontageToPlay, bool bIsInterrupted);
+
+
 #pragma endregion
+
 #pragma region Vault
 
 #pragma region Parameters
@@ -2293,20 +2434,6 @@ private:
 	 */
 	void ExitSlide();
 
-	/**
-	 * Returns the maximum speed allowed for the character, based on the current movement mode.
-	 */
-	virtual float GetMaxSpeed() const override;
-
-	/**
-	 * Returns the maximum acceleration allowed for the character, based on the current movement mode.
-	 */
-	virtual float GetMaxAcceleration() const override;
-
-	/**
-	 * Returns the maximum braking deceleration for the character, based on the current movement mode.
-	 */
-	virtual float GetMaxBrakingDeceleration() const override;
 
 	/**
 	 * Handles the physics calculations and behavior for sliding movement.

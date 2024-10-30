@@ -96,7 +96,6 @@ bool ANewCharacter::Prone()
 {
 	if (NewCharacterMovementComponent->CanProne())
 	{
-		//if (NewCharacterMovementComponent->IsCrouching()) UnCrouch();
 		NewCharacterMovementComponent->StartProne();
 		return true;
 	}
@@ -154,16 +153,19 @@ void ANewCharacter::StopWallRunning()
 
 bool ANewCharacter::Dash()
 {
-	FVector OutTargetLocation;  // Variable to store the target location
-	bool bOutSuccess = false;    // Variable to indicate success
-
-	// Call GetDashLocation
-	NewCharacterMovementComponent->GetDashLocation(OutTargetLocation, bOutSuccess);
-
-	if (bOutSuccess)  // Check if the dash location was successfully obtained
+	if (NewCharacterMovementComponent->CanDashInCurrentState())
 	{
-		NewCharacterMovementComponent->StartDash();  // Pass the location to StartDash
-		return true;
+		FVector OutTargetLocation;  // Variable to store the target location
+		bool bOutSuccess = false;    // Variable to indicate success
+
+		// Call GetDashLocation
+		NewCharacterMovementComponent->GetDashLocation(OutTargetLocation, bOutSuccess);
+
+		if (bOutSuccess)  // Check if the dash location was successfully obtained
+		{
+			NewCharacterMovementComponent->StartDash();  // Pass the location to StartDash
+			return true;
+		}
 	}
 	return false;
 }
@@ -204,10 +206,24 @@ UAdvancedMovementPrimaryDataAsset* ANewCharacter::GetCustomAdvancedMovementData_
 
 bool ANewCharacter::StartCustomAdvancedMovement_Implementation()
 {
+	if (CanCustomAdvancedMovement())
+	{
+		NewCharacterMovementComponent->StartCustomAdvancedMovement();
+		return true;
+	}
 	return false;
 }
 
 void ANewCharacter::StopCustomAdvancedMovement_Implementation()
+{
+	NewCharacterMovementComponent->StopCustomAdvancedMovement();
+}
+
+void ANewCharacter::EnterCustomAdvancedMovement_Implementation()
+{
+}
+
+void ANewCharacter::ExitCustomAdvancedMovement_Implementation()
 {
 }
 
@@ -383,6 +399,7 @@ void ANewCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+
 }
 
 void ANewCharacter::RecalculateBaseEyeHeight()
@@ -391,6 +408,17 @@ void ANewCharacter::RecalculateBaseEyeHeight()
 	else if (NewCharacterMovementComponent->IsSliding()) BaseEyeHeight = SlideEyeHeight;
 	else if (NewCharacterMovementComponent->IsVaulting()) BaseEyeHeight = 2 * GetDefault<APawn>(GetClass())->BaseEyeHeight;
 	else Super::RecalculateBaseEyeHeight();
+}
+
+void ANewCharacter::OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust)
+{
+	if (NewCharacterMovementComponent->WantsToProne())
+	{
+		RecalculateBaseEyeHeight();
+		K2_OnEndCrouch(HalfHeightAdjust, ScaledHalfHeightAdjust);
+	}
+	else
+		Super::OnEndCrouch(HalfHeightAdjust, ScaledHalfHeightAdjust);
 }
 
 #pragma endregion

@@ -99,6 +99,20 @@ void EmptyLinkFunctionForGeneratedCodeNewCharacter() {}
 		P_THIS->CustomAdvancedMovementPhysics_Implementation(Z_Param_deltaTime,Z_Param_Iterations);
 		P_NATIVE_END;
 	}
+	DEFINE_FUNCTION(ANewCharacter::execExitCustomAdvancedMovement)
+	{
+		P_FINISH;
+		P_NATIVE_BEGIN;
+		P_THIS->ExitCustomAdvancedMovement_Implementation();
+		P_NATIVE_END;
+	}
+	DEFINE_FUNCTION(ANewCharacter::execEnterCustomAdvancedMovement)
+	{
+		P_FINISH;
+		P_NATIVE_BEGIN;
+		P_THIS->EnterCustomAdvancedMovement_Implementation();
+		P_NATIVE_END;
+	}
 	DEFINE_FUNCTION(ANewCharacter::execStopCustomAdvancedMovement)
 	{
 		P_FINISH;
@@ -368,6 +382,16 @@ void EmptyLinkFunctionForGeneratedCodeNewCharacter() {}
 		Parms.Iterations=Iterations;
 		ProcessEvent(FindFunctionChecked(NAME_ANewCharacter_CustomAdvancedMovementPhysics),&Parms);
 	}
+	static FName NAME_ANewCharacter_EnterCustomAdvancedMovement = FName(TEXT("EnterCustomAdvancedMovement"));
+	void ANewCharacter::EnterCustomAdvancedMovement()
+	{
+		ProcessEvent(FindFunctionChecked(NAME_ANewCharacter_EnterCustomAdvancedMovement),NULL);
+	}
+	static FName NAME_ANewCharacter_ExitCustomAdvancedMovement = FName(TEXT("ExitCustomAdvancedMovement"));
+	void ANewCharacter::ExitCustomAdvancedMovement()
+	{
+		ProcessEvent(FindFunctionChecked(NAME_ANewCharacter_ExitCustomAdvancedMovement),NULL);
+	}
 	static FName NAME_ANewCharacter_GetClimbUpData = FName(TEXT("GetClimbUpData"));
 	UClimbUpPrimaryDataAsset* ANewCharacter::GetClimbUpData()
 	{
@@ -418,6 +442,8 @@ void EmptyLinkFunctionForGeneratedCodeNewCharacter() {}
 			{ "CrouchSprint", &ANewCharacter::execCrouchSprint },
 			{ "CustomAdvancedMovementPhysics", &ANewCharacter::execCustomAdvancedMovementPhysics },
 			{ "Dash", &ANewCharacter::execDash },
+			{ "EnterCustomAdvancedMovement", &ANewCharacter::execEnterCustomAdvancedMovement },
+			{ "ExitCustomAdvancedMovement", &ANewCharacter::execExitCustomAdvancedMovement },
 			{ "FastFly", &ANewCharacter::execFastFly },
 			{ "FastSwim", &ANewCharacter::execFastSwim },
 			{ "Fly", &ANewCharacter::execFly },
@@ -474,12 +500,12 @@ void EmptyLinkFunctionForGeneratedCodeNewCharacter() {}
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_ANewCharacter_CanCustomAdvancedMovement_Statics::Function_MetaDataParams[] = {
 		{ "Category", "Movement|Advanced" },
-		{ "Comment", "/**\n\x09 * Checks whether the character is currently allowed to perform custom advanced movement.\n\x09 * This function evaluates relevant gameplay conditions to determine if\n\x09 * the movement is permissible. Currently, it does not perform any specific actions\n\x09 * and is intended for future implementations.\n\x09 *\n\x09 * @return True if custom advanced movement can be performed; otherwise, false.\n\x09 */" },
+		{ "Comment", "/**\n\x09 * Determines if the character is permitted to initiate custom advanced movement.\n\x09 * This function evaluates gameplay-related conditions, checking if custom movement\n\x09 * is currently allowed. Useful for enforcing gameplay rules or restricting movement\n\x09 * based on situational factors. BlueprintNativeEvent for additional condition checks experimentally in Blueprints.\n\x09 *\n\x09 * @return True if custom advanced movement is allowed; false otherwise.\n\x09 */" },
 		{ "ModuleRelativePath", "Public/NewCharacter.h" },
-		{ "ToolTip", "Checks whether the character is currently allowed to perform custom advanced movement.\nThis function evaluates relevant gameplay conditions to determine if\nthe movement is permissible. Currently, it does not perform any specific actions\nand is intended for future implementations.\n\n@return True if custom advanced movement can be performed; otherwise, false." },
+		{ "ToolTip", "Determines if the character is permitted to initiate custom advanced movement.\nThis function evaluates gameplay-related conditions, checking if custom movement\nis currently allowed. Useful for enforcing gameplay rules or restricting movement\nbased on situational factors. BlueprintNativeEvent for additional condition checks experimentally in Blueprints.\n\n@return True if custom advanced movement is allowed; false otherwise." },
 	};
 #endif
-	const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_ANewCharacter_CanCustomAdvancedMovement_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_ANewCharacter, nullptr, "CanCustomAdvancedMovement", nullptr, nullptr, Z_Construct_UFunction_ANewCharacter_CanCustomAdvancedMovement_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_ANewCharacter_CanCustomAdvancedMovement_Statics::PropPointers), sizeof(NewCharacter_eventCanCustomAdvancedMovement_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x08020C00, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_ANewCharacter_CanCustomAdvancedMovement_Statics::Function_MetaDataParams), Z_Construct_UFunction_ANewCharacter_CanCustomAdvancedMovement_Statics::Function_MetaDataParams) };
+	const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_ANewCharacter_CanCustomAdvancedMovement_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_ANewCharacter, nullptr, "CanCustomAdvancedMovement", nullptr, nullptr, Z_Construct_UFunction_ANewCharacter_CanCustomAdvancedMovement_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_ANewCharacter_CanCustomAdvancedMovement_Statics::PropPointers), sizeof(NewCharacter_eventCanCustomAdvancedMovement_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x1C020C00, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_ANewCharacter_CanCustomAdvancedMovement_Statics::Function_MetaDataParams), Z_Construct_UFunction_ANewCharacter_CanCustomAdvancedMovement_Statics::Function_MetaDataParams) };
 	static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_ANewCharacter_CanCustomAdvancedMovement_Statics::PropPointers) < 2048);
 	static_assert(sizeof(NewCharacter_eventCanCustomAdvancedMovement_Parms) < MAX_uint16);
 	UFunction* Z_Construct_UFunction_ANewCharacter_CanCustomAdvancedMovement()
@@ -636,12 +662,12 @@ void EmptyLinkFunctionForGeneratedCodeNewCharacter() {}
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_ANewCharacter_CustomAdvancedMovementPhysics_Statics::Function_MetaDataParams[] = {
 		{ "Category", "Movement|Advanced" },
-		{ "Comment", "/**\n\x09 * Performs custom physics calculations for advanced movement.\n\x09 * This function is called every frame to apply any necessary physics logic\n\x09 * related to custom movement mechanics. Currently, it does not perform any\n\x09 * specific actions and is intended for future implementations.\n\x09 *\n\x09 * @param deltaTime The time elapsed since the last frame.\n\x09 * @param Iterations The number of iterations to apply physics calculations.\n\x09 */" },
+		{ "Comment", "/**\n\x09 * Executes custom physics calculations specific to advanced movement.\n\x09 * Called every frame, this function applies physics logic required by custom\n\x09 * movement mechanics, allowing for fine-tuned physics-based movement adjustments.\n\x09 * The deltaTime and iteration count enable granular control of the physics calculations.\n\x09 * BlueprintNativeEvent allows for detailed adjustments in Blueprint experimentally.\n\x09 *\n\x09 * @param deltaTime The time elapsed since the previous frame.\n\x09 * @param Iterations Number of physics calculation iterations to apply.\n\x09 */" },
 		{ "ModuleRelativePath", "Public/NewCharacter.h" },
-		{ "ToolTip", "Performs custom physics calculations for advanced movement.\nThis function is called every frame to apply any necessary physics logic\nrelated to custom movement mechanics. Currently, it does not perform any\nspecific actions and is intended for future implementations.\n\n@param deltaTime The time elapsed since the last frame.\n@param Iterations The number of iterations to apply physics calculations." },
+		{ "ToolTip", "Executes custom physics calculations specific to advanced movement.\nCalled every frame, this function applies physics logic required by custom\nmovement mechanics, allowing for fine-tuned physics-based movement adjustments.\nThe deltaTime and iteration count enable granular control of the physics calculations.\nBlueprintNativeEvent allows for detailed adjustments in Blueprint experimentally.\n\n@param deltaTime The time elapsed since the previous frame.\n@param Iterations Number of physics calculation iterations to apply." },
 	};
 #endif
-	const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_ANewCharacter_CustomAdvancedMovementPhysics_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_ANewCharacter, nullptr, "CustomAdvancedMovementPhysics", nullptr, nullptr, Z_Construct_UFunction_ANewCharacter_CustomAdvancedMovementPhysics_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_ANewCharacter_CustomAdvancedMovementPhysics_Statics::PropPointers), sizeof(NewCharacter_eventCustomAdvancedMovementPhysics_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x08020C00, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_ANewCharacter_CustomAdvancedMovementPhysics_Statics::Function_MetaDataParams), Z_Construct_UFunction_ANewCharacter_CustomAdvancedMovementPhysics_Statics::Function_MetaDataParams) };
+	const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_ANewCharacter_CustomAdvancedMovementPhysics_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_ANewCharacter, nullptr, "CustomAdvancedMovementPhysics", nullptr, nullptr, Z_Construct_UFunction_ANewCharacter_CustomAdvancedMovementPhysics_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_ANewCharacter_CustomAdvancedMovementPhysics_Statics::PropPointers), sizeof(NewCharacter_eventCustomAdvancedMovementPhysics_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x0C020C00, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_ANewCharacter_CustomAdvancedMovementPhysics_Statics::Function_MetaDataParams), Z_Construct_UFunction_ANewCharacter_CustomAdvancedMovementPhysics_Statics::Function_MetaDataParams) };
 	static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_ANewCharacter_CustomAdvancedMovementPhysics_Statics::PropPointers) < 2048);
 	static_assert(sizeof(NewCharacter_eventCustomAdvancedMovementPhysics_Parms) < MAX_uint16);
 	UFunction* Z_Construct_UFunction_ANewCharacter_CustomAdvancedMovementPhysics()
@@ -692,6 +718,56 @@ void EmptyLinkFunctionForGeneratedCodeNewCharacter() {}
 		if (!ReturnFunction)
 		{
 			UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_ANewCharacter_Dash_Statics::FuncParams);
+		}
+		return ReturnFunction;
+	}
+	struct Z_Construct_UFunction_ANewCharacter_EnterCustomAdvancedMovement_Statics
+	{
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UECodeGen_Private::FFunctionParams FuncParams;
+	};
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_ANewCharacter_EnterCustomAdvancedMovement_Statics::Function_MetaDataParams[] = {
+		{ "Category", "Movement|Advanced" },
+		{ "Comment", "/**\n\x09 * Enters the character into a custom advanced movement state.\n\x09 * Intended for advanced movement sequences that require transitioning into\n\x09 * specialized movement behaviors, this function sets the necessary parameters\n\x09 * to begin custom movement mechanics. BlueprintNativeEvent enables experimental Blueprint-based overrides.\n\x09 */" },
+		{ "ModuleRelativePath", "Public/NewCharacter.h" },
+		{ "ToolTip", "Enters the character into a custom advanced movement state.\nIntended for advanced movement sequences that require transitioning into\nspecialized movement behaviors, this function sets the necessary parameters\nto begin custom movement mechanics. BlueprintNativeEvent enables experimental Blueprint-based overrides." },
+	};
+#endif
+	const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_ANewCharacter_EnterCustomAdvancedMovement_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_ANewCharacter, nullptr, "EnterCustomAdvancedMovement", nullptr, nullptr, nullptr, 0, 0, RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x0C020C00, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_ANewCharacter_EnterCustomAdvancedMovement_Statics::Function_MetaDataParams), Z_Construct_UFunction_ANewCharacter_EnterCustomAdvancedMovement_Statics::Function_MetaDataParams) };
+	UFunction* Z_Construct_UFunction_ANewCharacter_EnterCustomAdvancedMovement()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_ANewCharacter_EnterCustomAdvancedMovement_Statics::FuncParams);
+		}
+		return ReturnFunction;
+	}
+	struct Z_Construct_UFunction_ANewCharacter_ExitCustomAdvancedMovement_Statics
+	{
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UECodeGen_Private::FFunctionParams FuncParams;
+	};
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_ANewCharacter_ExitCustomAdvancedMovement_Statics::Function_MetaDataParams[] = {
+		{ "Category", "Movement|Advanced" },
+		{ "Comment", "/**\n\x09 * Exits the character from a custom advanced movement state.\n\x09 * Used to end advanced movement and revert back to standard character movement\n\x09 * settings. This function ensures smooth transitions and proper state cleanup\n\x09 * for custom movement sequences. Ideal for adding logic for custom exit actions experimentally.\n\x09 */" },
+		{ "ModuleRelativePath", "Public/NewCharacter.h" },
+		{ "ToolTip", "Exits the character from a custom advanced movement state.\nUsed to end advanced movement and revert back to standard character movement\nsettings. This function ensures smooth transitions and proper state cleanup\nfor custom movement sequences. Ideal for adding logic for custom exit actions experimentally." },
+	};
+#endif
+	const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_ANewCharacter_ExitCustomAdvancedMovement_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_ANewCharacter, nullptr, "ExitCustomAdvancedMovement", nullptr, nullptr, nullptr, 0, 0, RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x0C020C00, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_ANewCharacter_ExitCustomAdvancedMovement_Statics::Function_MetaDataParams), Z_Construct_UFunction_ANewCharacter_ExitCustomAdvancedMovement_Statics::Function_MetaDataParams) };
+	UFunction* Z_Construct_UFunction_ANewCharacter_ExitCustomAdvancedMovement()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_ANewCharacter_ExitCustomAdvancedMovement_Statics::FuncParams);
 		}
 		return ReturnFunction;
 	}
@@ -870,9 +946,9 @@ void EmptyLinkFunctionForGeneratedCodeNewCharacter() {}
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_ANewCharacter_GetCustomAdvancedMovementData_Statics::Function_MetaDataParams[] = {
 		{ "Category", "Movement|Advanced" },
-		{ "Comment", "/**\n * Retrieves the advanced movement data asset associated with this character.\n * This function provides access to custom movement parameters that may affect\n * advanced movement capabilities. Currently, this function does not perform any\n * specific actions and is intended for future implementations.\n *\n * @return Pointer to the UAdvancedMovementPrimaryDataAsset instance.\n */" },
+		{ "Comment", "/**\n\x09 * Retrieves the custom advanced movement data asset associated with this character.\n\x09 * Provides access to configurable parameters that influence advanced movement\n\x09 * capabilities, allowing flexibility in custom movement behaviors.\n\x09 * This function is a BlueprintNativeEvent, meaning it can be overridden in\n\x09 * Blueprints for further customization.\n\x09 *\n\x09 * @return Pointer to a UAdvancedMovementPrimaryDataAsset instance if available;\n\x09 *         nullptr otherwise.\n\x09 */" },
 		{ "ModuleRelativePath", "Public/NewCharacter.h" },
-		{ "ToolTip", "Retrieves the advanced movement data asset associated with this character.\nThis function provides access to custom movement parameters that may affect\nadvanced movement capabilities. Currently, this function does not perform any\nspecific actions and is intended for future implementations.\n\n@return Pointer to the UAdvancedMovementPrimaryDataAsset instance." },
+		{ "ToolTip", "Retrieves the custom advanced movement data asset associated with this character.\nProvides access to configurable parameters that influence advanced movement\ncapabilities, allowing flexibility in custom movement behaviors.\nThis function is a BlueprintNativeEvent, meaning it can be overridden in\nBlueprints for further customization.\n\n@return Pointer to a UAdvancedMovementPrimaryDataAsset instance if available;\n        nullptr otherwise." },
 	};
 #endif
 	const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_ANewCharacter_GetCustomAdvancedMovementData_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_ANewCharacter, nullptr, "GetCustomAdvancedMovementData", nullptr, nullptr, Z_Construct_UFunction_ANewCharacter_GetCustomAdvancedMovementData_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_ANewCharacter_GetCustomAdvancedMovementData_Statics::PropPointers), sizeof(NewCharacter_eventGetCustomAdvancedMovementData_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x48020C00, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_ANewCharacter_GetCustomAdvancedMovementData_Statics::Function_MetaDataParams), Z_Construct_UFunction_ANewCharacter_GetCustomAdvancedMovementData_Statics::Function_MetaDataParams) };
@@ -1234,12 +1310,12 @@ void EmptyLinkFunctionForGeneratedCodeNewCharacter() {}
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_ANewCharacter_StartCustomAdvancedMovement_Statics::Function_MetaDataParams[] = {
 		{ "Category", "Movement|Advanced" },
-		{ "Comment", "/**\n\x09 * Initiates custom advanced movement for the character.\n\x09 * This function checks the conditions and initiates the necessary changes\n\x09 * in character state to start the custom movement. Currently, it does not\n\x09 * perform any specific actions and is intended for future implementations.\n\x09 *\n\x09 * @return True if the advanced movement was successfully started; otherwise, false.\n\x09 */" },
+		{ "Comment", "/**\n\x09 * Initiates custom advanced movement for the character.\n\x09 * This function assesses conditions and triggers necessary state changes to\n\x09 * activate custom movement logic. Intended as an entry point for advanced\n\x09 * movement, allowing for specialized gameplay mechanics to be added experimentally.\n\x09 * BlueprintNativeEvent allows this function to be customized in Blueprints.\n\x09 *\n\x09 * @return True if the custom movement initiation is successful, false otherwise.\n\x09 */" },
 		{ "ModuleRelativePath", "Public/NewCharacter.h" },
-		{ "ToolTip", "Initiates custom advanced movement for the character.\nThis function checks the conditions and initiates the necessary changes\nin character state to start the custom movement. Currently, it does not\nperform any specific actions and is intended for future implementations.\n\n@return True if the advanced movement was successfully started; otherwise, false." },
+		{ "ToolTip", "Initiates custom advanced movement for the character.\nThis function assesses conditions and triggers necessary state changes to\nactivate custom movement logic. Intended as an entry point for advanced\nmovement, allowing for specialized gameplay mechanics to be added experimentally.\nBlueprintNativeEvent allows this function to be customized in Blueprints.\n\n@return True if the custom movement initiation is successful, false otherwise." },
 	};
 #endif
-	const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_ANewCharacter_StartCustomAdvancedMovement_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_ANewCharacter, nullptr, "StartCustomAdvancedMovement", nullptr, nullptr, Z_Construct_UFunction_ANewCharacter_StartCustomAdvancedMovement_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_ANewCharacter_StartCustomAdvancedMovement_Statics::PropPointers), sizeof(NewCharacter_eventStartCustomAdvancedMovement_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x08020C00, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_ANewCharacter_StartCustomAdvancedMovement_Statics::Function_MetaDataParams), Z_Construct_UFunction_ANewCharacter_StartCustomAdvancedMovement_Statics::Function_MetaDataParams) };
+	const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_ANewCharacter_StartCustomAdvancedMovement_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_ANewCharacter, nullptr, "StartCustomAdvancedMovement", nullptr, nullptr, Z_Construct_UFunction_ANewCharacter_StartCustomAdvancedMovement_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_ANewCharacter_StartCustomAdvancedMovement_Statics::PropPointers), sizeof(NewCharacter_eventStartCustomAdvancedMovement_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x0C020C00, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_ANewCharacter_StartCustomAdvancedMovement_Statics::Function_MetaDataParams), Z_Construct_UFunction_ANewCharacter_StartCustomAdvancedMovement_Statics::Function_MetaDataParams) };
 	static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_ANewCharacter_StartCustomAdvancedMovement_Statics::PropPointers) < 2048);
 	static_assert(sizeof(NewCharacter_eventStartCustomAdvancedMovement_Parms) < MAX_uint16);
 	UFunction* Z_Construct_UFunction_ANewCharacter_StartCustomAdvancedMovement()
@@ -1361,12 +1437,12 @@ void EmptyLinkFunctionForGeneratedCodeNewCharacter() {}
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_ANewCharacter_StopCustomAdvancedMovement_Statics::Function_MetaDataParams[] = {
 		{ "Category", "Movement|Advanced" },
-		{ "Comment", "/**\n\x09 * Stops the custom advanced movement for the character.\n\x09 * This function reverts the character's state back to normal movement mechanics.\n\x09 * Currently, it does not perform any specific actions and is intended for future implementations.\n\x09 */" },
+		{ "Comment", "/**\n\x09 * Terminates the character's custom advanced movement state.\n\x09 * This function restores the character's default movement behavior, effectively\n\x09 * ending any custom advanced movement logic. Ideal for cleanly reverting changes\n\x09 * made during custom movement. This function is designed for experimental use\n\x09 * as the custom movement system evolves.\n\x09 */" },
 		{ "ModuleRelativePath", "Public/NewCharacter.h" },
-		{ "ToolTip", "Stops the custom advanced movement for the character.\nThis function reverts the character's state back to normal movement mechanics.\nCurrently, it does not perform any specific actions and is intended for future implementations." },
+		{ "ToolTip", "Terminates the character's custom advanced movement state.\nThis function restores the character's default movement behavior, effectively\nending any custom advanced movement logic. Ideal for cleanly reverting changes\nmade during custom movement. This function is designed for experimental use\nas the custom movement system evolves." },
 	};
 #endif
-	const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_ANewCharacter_StopCustomAdvancedMovement_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_ANewCharacter, nullptr, "StopCustomAdvancedMovement", nullptr, nullptr, nullptr, 0, 0, RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x08020C00, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_ANewCharacter_StopCustomAdvancedMovement_Statics::Function_MetaDataParams), Z_Construct_UFunction_ANewCharacter_StopCustomAdvancedMovement_Statics::Function_MetaDataParams) };
+	const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_ANewCharacter_StopCustomAdvancedMovement_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_ANewCharacter, nullptr, "StopCustomAdvancedMovement", nullptr, nullptr, nullptr, 0, 0, RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x0C020C00, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_ANewCharacter_StopCustomAdvancedMovement_Statics::Function_MetaDataParams), Z_Construct_UFunction_ANewCharacter_StopCustomAdvancedMovement_Statics::Function_MetaDataParams) };
 	UFunction* Z_Construct_UFunction_ANewCharacter_StopCustomAdvancedMovement()
 	{
 		static UFunction* ReturnFunction = nullptr;
@@ -1777,17 +1853,19 @@ void EmptyLinkFunctionForGeneratedCodeNewCharacter() {}
 	};
 	static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_ANewCharacter_Statics::DependentSingletons) < 16);
 	const FClassFunctionLinkInfo Z_Construct_UClass_ANewCharacter_Statics::FuncInfo[] = {
-		{ &Z_Construct_UFunction_ANewCharacter_CanCustomAdvancedMovement, "CanCustomAdvancedMovement" }, // 23849012
+		{ &Z_Construct_UFunction_ANewCharacter_CanCustomAdvancedMovement, "CanCustomAdvancedMovement" }, // 4230443901
 		{ &Z_Construct_UFunction_ANewCharacter_Climb, "Climb" }, // 508110465
 		{ &Z_Construct_UFunction_ANewCharacter_ClimbUp, "ClimbUp" }, // 685623370
 		{ &Z_Construct_UFunction_ANewCharacter_CrouchSprint, "CrouchSprint" }, // 3954996373
-		{ &Z_Construct_UFunction_ANewCharacter_CustomAdvancedMovementPhysics, "CustomAdvancedMovementPhysics" }, // 2940112524
+		{ &Z_Construct_UFunction_ANewCharacter_CustomAdvancedMovementPhysics, "CustomAdvancedMovementPhysics" }, // 2950624207
 		{ &Z_Construct_UFunction_ANewCharacter_Dash, "Dash" }, // 3856176094
+		{ &Z_Construct_UFunction_ANewCharacter_EnterCustomAdvancedMovement, "EnterCustomAdvancedMovement" }, // 4177166462
+		{ &Z_Construct_UFunction_ANewCharacter_ExitCustomAdvancedMovement, "ExitCustomAdvancedMovement" }, // 406231775
 		{ &Z_Construct_UFunction_ANewCharacter_FastFly, "FastFly" }, // 3407681376
 		{ &Z_Construct_UFunction_ANewCharacter_FastSwim, "FastSwim" }, // 2757514799
 		{ &Z_Construct_UFunction_ANewCharacter_Fly, "Fly" }, // 681585408
 		{ &Z_Construct_UFunction_ANewCharacter_GetClimbUpData, "GetClimbUpData" }, // 111445489
-		{ &Z_Construct_UFunction_ANewCharacter_GetCustomAdvancedMovementData, "GetCustomAdvancedMovementData" }, // 2441346499
+		{ &Z_Construct_UFunction_ANewCharacter_GetCustomAdvancedMovementData, "GetCustomAdvancedMovementData" }, // 306679411
 		{ &Z_Construct_UFunction_ANewCharacter_GetMantleData, "GetMantleData" }, // 4126256666
 		{ &Z_Construct_UFunction_ANewCharacter_GetMotionWarpingComponent, "GetMotionWarpingComponent" }, // 2725150200
 		{ &Z_Construct_UFunction_ANewCharacter_GetNewCharacterMovementComponent, "GetNewCharacterMovementComponent" }, // 3468633205
@@ -1796,12 +1874,12 @@ void EmptyLinkFunctionForGeneratedCodeNewCharacter() {}
 		{ &Z_Construct_UFunction_ANewCharacter_Prone, "Prone" }, // 3444037703
 		{ &Z_Construct_UFunction_ANewCharacter_Slide, "Slide" }, // 2825895138
 		{ &Z_Construct_UFunction_ANewCharacter_Sprint, "Sprint" }, // 453974724
-		{ &Z_Construct_UFunction_ANewCharacter_StartCustomAdvancedMovement, "StartCustomAdvancedMovement" }, // 350441478
+		{ &Z_Construct_UFunction_ANewCharacter_StartCustomAdvancedMovement, "StartCustomAdvancedMovement" }, // 742284014
 		{ &Z_Construct_UFunction_ANewCharacter_StartFastMovement, "StartFastMovement" }, // 1728798419
 		{ &Z_Construct_UFunction_ANewCharacter_StopClimb, "StopClimb" }, // 1351102994
 		{ &Z_Construct_UFunction_ANewCharacter_StopClimbingUp, "StopClimbingUp" }, // 3576529907
 		{ &Z_Construct_UFunction_ANewCharacter_StopCrouchSprinting, "StopCrouchSprinting" }, // 823662212
-		{ &Z_Construct_UFunction_ANewCharacter_StopCustomAdvancedMovement, "StopCustomAdvancedMovement" }, // 760967334
+		{ &Z_Construct_UFunction_ANewCharacter_StopCustomAdvancedMovement, "StopCustomAdvancedMovement" }, // 2254371723
 		{ &Z_Construct_UFunction_ANewCharacter_StopDashing, "StopDashing" }, // 742551542
 		{ &Z_Construct_UFunction_ANewCharacter_StopFastFlying, "StopFastFlying" }, // 3231344612
 		{ &Z_Construct_UFunction_ANewCharacter_StopFastMovement, "StopFastMovement" }, // 2367474070
@@ -1917,9 +1995,9 @@ void EmptyLinkFunctionForGeneratedCodeNewCharacter() {}
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_NewPlugin___5_3_CharacterLocomotionSystem_HostProject_Plugins_CharacterLocomotionSystem_Source_CharacterLocomotionSystem_Public_NewCharacter_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_ANewCharacter, ANewCharacter::StaticClass, TEXT("ANewCharacter"), &Z_Registration_Info_UClass_ANewCharacter, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(ANewCharacter), 934233374U) },
+		{ Z_Construct_UClass_ANewCharacter, ANewCharacter::StaticClass, TEXT("ANewCharacter"), &Z_Registration_Info_UClass_ANewCharacter, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(ANewCharacter), 1868393102U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_NewPlugin___5_3_CharacterLocomotionSystem_HostProject_Plugins_CharacterLocomotionSystem_Source_CharacterLocomotionSystem_Public_NewCharacter_h_3628362243(TEXT("/Script/CharacterLocomotionSystem"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_NewPlugin___5_3_CharacterLocomotionSystem_HostProject_Plugins_CharacterLocomotionSystem_Source_CharacterLocomotionSystem_Public_NewCharacter_h_3894193782(TEXT("/Script/CharacterLocomotionSystem"),
 		Z_CompiledInDeferFile_FID_NewPlugin___5_3_CharacterLocomotionSystem_HostProject_Plugins_CharacterLocomotionSystem_Source_CharacterLocomotionSystem_Public_NewCharacter_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_NewPlugin___5_3_CharacterLocomotionSystem_HostProject_Plugins_CharacterLocomotionSystem_Source_CharacterLocomotionSystem_Public_NewCharacter_h_Statics::ClassInfo),
 		nullptr, 0,
 		nullptr, 0);

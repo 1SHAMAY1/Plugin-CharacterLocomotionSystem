@@ -75,6 +75,8 @@ UNewCharacterMovementComponent::UNewCharacterMovementComponent(const FObjectInit
 	bCanProne = true;
 	bShowProneDebugTraces = false;
 	//Slide
+	MinAutoSlideSpeed = 0.0f;
+	MinAutoSlideAngle = 50.0f;
 	MinSlideSpeed = 400.0f;
 	MaxSlideSpeed = 600.0f;
 	MaxSlideAcceleration = 10000.0f;
@@ -84,6 +86,7 @@ UNewCharacterMovementComponent::UNewCharacterMovementComponent(const FObjectInit
 	BrakingDecelerationSliding = 1000.0f;
 	SlideHeight = 60.0f;
 	bCanSlide = true;
+	bCanAutoSlide = true;
 	bShowSlideDebugTraces = false;
 	//WallRun
 	MinWallRunSpeed = 400.0f;
@@ -122,6 +125,9 @@ UNewCharacterMovementComponent::UNewCharacterMovementComponent(const FObjectInit
 	bUseSpecificClimbSurface = false;
 
 	//Advanced
+
+	WarpTargetLocations.Empty();
+	WarpTargetRotations.Empty();
 
 	//Vault
 	MinVaultSpeed = 0.0f;
@@ -227,16 +233,18 @@ void UNewCharacterMovementComponent::Crouch(bool bClientSimulation)
 
 void UNewCharacterMovementComponent::UnCrouch(bool bClientSimulation)
 {
-	if (IsExtendedFlagActive((uint8)EExtendedMovementFlag::CFLAG_WantsToProne))
+	if (WantsToProne())
 	{
 		if (!HasValidData()) return;
-		CharacterOwner->bIsCrouched = false;
-		/*const float ComponentScale = CharacterOwner->GetCapsuleComponent()->GetShapeScale();
-		float HHAdjust = GetCrouchedHalfHeight() - GetProneHalfHeight();
-		CharacterOwner->OnEndCrouch(HHAdjust, HHAdjust * ComponentScale);*/
-		return;
+		CharOwner->bIsCrouched = false;
+		float HHAdjust = GetProneHalfHeight() - GetCrouchedHalfHeight();
+		const float ComponentScale = CharacterOwner->GetCapsuleComponent()->GetShapeScale();
+		float SHHAdjust = HHAdjust * ComponentScale;
+		CharOwner->OnEndCrouch(HHAdjust, SHHAdjust);
 	}
-	else Super::UnCrouch(bClientSimulation);
+	else if (CapHH() != GetProneHalfHeight())
+		Super::UnCrouch(bClientSimulation);
+
 }
 
 void UNewCharacterMovementComponent::StartCrouchSprint()
@@ -275,13 +283,17 @@ bool UNewCharacterMovementComponent::IsCrouchSprinting() const
 void UNewCharacterMovementComponent::StartProne()
 {
 	if (bCanProne) ActivateExtendedMovementFlag((uint8)EExtendedMovementFlag::CFLAG_WantsToProne);
-
 }
 
 void UNewCharacterMovementComponent::StopProne()
 {
-	if (IsProning()) ClearExtendedMovementFlag((uint8)EExtendedMovementFlag::CFLAG_WantsToProne);
+	if (IsExtendedFlagActive((uint8)EExtendedMovementFlag::CFLAG_WantsToProne)) ClearExtendedMovementFlag((uint8)EExtendedMovementFlag::CFLAG_WantsToProne);
 
+}
+
+bool UNewCharacterMovementComponent::WantsToProne()
+{
+	return IsExtendedFlagActive((uint8)EExtendedMovementFlag::CFLAG_WantsToProne);
 }
 
 bool UNewCharacterMovementComponent::CanProne() const
@@ -366,6 +378,7 @@ void UNewCharacterMovementComponent::PhysProne(float DeltaTime, int32 Iterations
 					const float ActualDist = (UpdatedComponent->GetComponentLocation() - OldLocation).Size2D();
 					remainingTime += timeTick * (1.f - FMath::Min(1.f, ActualDist / DesiredDist));
 				}
+				StopProne();
 				StartNewPhysics(remainingTime, Iterations);
 				return;
 			}
@@ -455,8 +468,8 @@ void UNewCharacterMovementComponent::PhysProne(float DeltaTime, int32 Iterations
 				if ((bMustJump || !bCheckedFall) && CheckFall(OldFloor, CurrentFloor.HitResult, Delta, OldLocation, remainingTime, timeTick, Iterations, bMustJump))
 				{
 					StartNewPhysics(DeltaTime, Iterations);
-
 					StopProne();
+					ExitProne();
 					return;
 				}
 				bCheckedFall = true;
@@ -490,11 +503,16 @@ void UNewCharacterMovementComponent::EnterProne()
 {
 	if (CheckHHUpdateProne())
 	{
-		if (bWantsToCrouch) bWantsToCrouch = false;
+		if (bWantsToCrouch)
+			bWantsToCrouch = false;
 		HHUpdateProne();
-		Multicast_UpdateHHEnterProne();
+		if (CharacterOwner->GetLocalRole() == ROLE_Authority)
+			Multicast_UpdateHHEnterProne();
 		SetMovementMode(MOVE_Custom, CMOVE_Prone);
+		if (CharacterOwner->IsLocallyControlled())
+			CharacterOwner->RecalculateBaseEyeHeight();
 		OnProneStart.Broadcast();
+
 	}
 }
 
@@ -503,8 +521,10 @@ void UNewCharacterMovementComponent::ExitProne()
 	if (CheckHHUpdateStopProne(bWantsToCrouch))
 	{
 		HHUpdateStopProne(bWantsToCrouch);
-		Multicast_UpdateHHExitProne(bWantsToCrouch);
+		if(CharacterOwner->GetLocalRole()==ROLE_Authority) Multicast_UpdateHHExitProne(bWantsToCrouch);
 		SetMovementMode(MOVE_Walking);
+		if (CharacterOwner->IsLocallyControlled() && !bWantsToCrouch)
+			CharacterOwner->RecalculateBaseEyeHeight();
 		OnProneStop.Broadcast();
 	}
 	else if (CheckHHUpdateStopProne(true))
@@ -669,8 +689,56 @@ float UNewCharacterMovementComponent::GetSlideHalfHeight() const
 
 bool UNewCharacterMovementComponent::CanSlide() const
 {
+	if (CanAutoSlide()) return true;
 	bool bEnoughSpeed = Velocity.SizeSquared() > pow(MinSlideSpeed, 2);
 	return IsMovingOnGround() && !IsCrouching() && bEnoughSpeed;
+}
+
+bool UNewCharacterMovementComponent::CanAutoSlide() const
+{   
+	if (!IsMovingOnGround() || IsSliding() || !bCanAutoSlide || !bCanSlide || !CurrentFloor.bBlockingHit)
+		return false;
+
+	// Get the normal of the floor
+	FVector FloorNormal = CurrentFloor.HitResult.ImpactNormal;
+	FVector UpVector = FVector::UpVector;
+	const float FloorAngle = GetCurrentFloorAngle();
+	FVector Loc = CharacterOwner->GetActorLocation() + (CharacterOwner->GetActorForwardVector() * (CapR() / 2)) - (CharacterOwner->GetActorUpVector() * CapR());
+	FHitResult HitResult;
+	// Perform the sweep using the "BlockAll" profile
+	bool bHit = GetWorld()->SweepSingleByProfile(
+		HitResult,
+		Loc,
+		Loc,
+		FQuat::Identity,
+		TEXT("BlockAll"),
+		FCollisionShape::MakeCapsule(CapR() / 2, CapHH()),
+		GetIgnoreCharacterParams()
+	);
+	
+	if (bShowSlideDebugTraces)
+		DrawDebugCapsule(GetWorld(), Loc, CapHH(), CapR(), FQuat::Identity, FColor::Yellow, false, -1, -1, 2.0f);
+
+
+	if (bShowSlideDebugTraces)
+		if (GEngine)
+			GEngine->AddOnScreenDebugMessage(-1,-1, FColor::Green, FString::Printf(TEXT("Floor Angle: %f degrees"), FloorAngle));
+	if (!bHit ||
+		(FMath::RadiansToDegrees(acosf(FVector::DotProduct(
+			HitResult.Normal,
+			CharacterOwner->GetActorForwardVector()))) > MinAutoSlideAngle))
+		return false;
+	// Check if the floor angle is below or equal to the minimum slide angle
+	bool bIsAngleTooSteep = FloorAngle > MinAutoSlideAngle;
+	bool bIsVelocityTooLow = Velocity.SizeSquared() < FMath::Square(MinAutoSlideSpeed);
+	bool bIsFloorWalkable = FMath::Abs(FloorAngle) > GetWalkableFloorAngle();
+
+	if ((bIsAngleTooSteep || bIsVelocityTooLow) && bIsFloorWalkable)
+		return false;
+
+	// All conditions met for auto sliding
+	return true;
+	
 }
 
 bool UNewCharacterMovementComponent::IsSliding() const
@@ -882,8 +950,11 @@ void UNewCharacterMovementComponent::EnterSlide()
 		Velocity += Velocity.GetSafeNormal2D() * SlideEnterImpulse;
 		FindFloor(UpdatedComponent->GetComponentLocation(), CurrentFloor, true, NULL);
 		HHUpdateSlide();
-		Multicast_UpdateHHEnterSlide();
+		if (CharacterOwner->GetLocalRole() == ROLE_Authority)
+			Multicast_UpdateHHEnterSlide();
 		SetMovementMode(MOVE_Custom, CMOVE_Slide);
+		if (CharacterOwner->IsLocallyControlled())
+			CharacterOwner->RecalculateBaseEyeHeight();
 		OnSlideStart.Broadcast();
 	}
 	else StopSlide();
@@ -892,14 +963,19 @@ void UNewCharacterMovementComponent::EnterSlide()
 
 void UNewCharacterMovementComponent::ExitSlide()
 {
+	if (CanAutoSlide())
+		return;
 	if (CheckHHUpdateStopSlide())
 	{
 		HHUpdateStopSlide();
-		Multicast_UpdateHHExitSlide();
+		if(CharacterOwner->HasAuthority())
+			Multicast_UpdateHHExitSlide();
 		FQuat NewRotation = FRotationMatrix::MakeFromXZ(UpdatedComponent->GetForwardVector().GetSafeNormal2D(), FVector::UpVector).ToQuat();
 		FHitResult Hit;
 		SafeMoveUpdatedComponent(FVector::ZeroVector, NewRotation, true, Hit);
 		SetMovementMode(MOVE_Walking);
+		if (CharacterOwner->IsLocallyControlled())
+			CharacterOwner->RecalculateBaseEyeHeight();
 	}
 	else
 	{
@@ -907,13 +983,15 @@ void UNewCharacterMovementComponent::ExitSlide()
 		switch (SlideExitMovementMode)
 		{
 		case ESlideExitMovementMode::Crouch:
-			bWantsToCrouch = true;
+			Crouch();
 			break;
 		case ESlideExitMovementMode::Prone:
-			StartProne();
+			EnterProne();
+			StopProne();
 			break;
 		default:
-			StartProne();
+			EnterProne();
+			StopProne();
 			break;
 		}
 	}
@@ -1234,83 +1312,94 @@ void UNewCharacterMovementComponent::GetDashLocation(FVector& OutTargetLocation,
 		}
 	}
 
-	// Determine if a valid location was found
-	if (FVector::Dist(HitResults[HitResults.Num() - 1].Location, CharacterOwner->GetActorLocation()) > DashDistance / 4)
+	if (HitResults.Num() != 0)
 	{
-		FVector CandidateLocation = HitResults[HitResults.Num()-1].Location; // Second last valid hit
-		CandidateLocation += Up * CapsuleHalfHeight * 1.7f; // Apply upward offset
 
+		// Determine if a valid location was found
 
+		if (FVector::Dist(HitResults[HitResults.Num() - 1].Location, CharacterOwner->GetActorLocation()) > DashDistance / 4)
 
-		// Perform a capsule sweep at the candidate location to validate it
-		FHitResult CapsuleHit;
-		bool bCapsuleHit = GetWorld()->SweepSingleByProfile(
-			CapsuleHit,
-			CandidateLocation, // Start slightly below to account for capsule height
-			CandidateLocation, // End slightly above
-			FQuat::Identity,
-			TEXT("BlockAll"),
-			FCollisionShape::MakeCapsule(CapsuleRadius * 1.5f, CapsuleHalfHeight * 1.5f),
-			QueryParams
-		);
-
-		if (!bCapsuleHit)
 		{
-			if (bShowDashDebugTraces)
+			FVector CandidateLocation = HitResults[HitResults.Num() - 1].Location; // Second last valid hit
+			CandidateLocation += Up * CapsuleHalfHeight * 1.7f; // Apply upward offset
+
+
+
+			// Perform a capsule sweep at the candidate location to validate it
+			FHitResult CapsuleHit;
+			bool bCapsuleHit = GetWorld()->SweepSingleByProfile(
+				CapsuleHit,
+				CandidateLocation, // Start slightly below to account for capsule height
+				CandidateLocation, // End slightly above
+				FQuat::Identity,
+				TEXT("BlockAll"),
+				FCollisionShape::MakeCapsule(CapsuleRadius * 1.5f, CapsuleHalfHeight * 1.5f),
+				QueryParams
+			);
+
+			if (!bCapsuleHit)
 			{
-				// Draw debug capsule for the candidate location
-				DrawDebugCapsule(GetWorld(),
-					CandidateLocation,
-					CapsuleHalfHeight * 1.5f,
-					CapsuleRadius * 1.5f,
-					FQuat::Identity,
-					FColor::White,
-					false,
-					3.0f);
+				if (bShowDashDebugTraces)
+				{
+					// Draw debug capsule for the candidate location
+					DrawDebugCapsule(GetWorld(),
+						CandidateLocation,
+						CapsuleHalfHeight * 1.5f,
+						CapsuleRadius * 1.5f,
+						FQuat::Identity,
+						FColor::White,
+						false,
+						3.0f);
+				}
+				// If no hit, this is a valid location
+				OutTargetLocation = CandidateLocation;
+				bOutSuccess = true;
 			}
-			// If no hit, this is a valid location
-			OutTargetLocation = CandidateLocation;
-			bOutSuccess = true;
+			else
+			{
+				// Iterate through previous results to find a valid location if needed
+				for (int32 i = HitResults.Num() - 1; i >= 0; i--)
+				{
+					FVector RetryLocation = HitResults[i].Location + Up * CapsuleHalfHeight * 1.7f;
+					FHitResult RetryHit;
+					bool bRetryCapsuleHit = GetWorld()->SweepSingleByProfile(
+						RetryHit,
+						RetryLocation,
+						RetryLocation,
+						FQuat::Identity,
+						TEXT("BlockAll"),
+						FCollisionShape::MakeCapsule(CapsuleRadius * 1.5f, CapsuleHalfHeight * 1.5f),
+						QueryParams
+					);
+
+					if (!bRetryCapsuleHit)
+					{
+						if (bShowDashDebugTraces)
+						{
+							// Draw debug capsule for the candidate location
+							DrawDebugCapsule(GetWorld(),
+								RetryLocation,
+								CapsuleHalfHeight * 1.5f,
+								CapsuleRadius * 1.5f,
+								FQuat::Identity,
+								FColor::White,
+								false,
+								3.0f);
+						}
+						OutTargetLocation = RetryLocation;
+						bOutSuccess = true;
+						HitResults.Empty(); // Clear the array before returning
+						return;
+					}
+				}
+
+				// No valid location found
+				OutTargetLocation = FVector::ZeroVector; // Or some default value
+				bOutSuccess = false;
+			}
 		}
 		else
 		{
-			// Iterate through previous results to find a valid location if needed
-			for (int32 i = HitResults.Num() - 1; i >= 0; i--)
-			{
-				FVector RetryLocation = HitResults[i].Location + Up * CapsuleHalfHeight * 1.7f;
-				FHitResult RetryHit;
-				bool bRetryCapsuleHit = GetWorld()->SweepSingleByProfile(
-					RetryHit,
-					RetryLocation,
-					RetryLocation,
-					FQuat::Identity,
-					TEXT("BlockAll"),
-					FCollisionShape::MakeCapsule(CapsuleRadius * 1.5f, CapsuleHalfHeight * 1.5f),
-					QueryParams
-				);
-
-				if (!bRetryCapsuleHit)
-				{
-					if (bShowDashDebugTraces)
-					{
-						// Draw debug capsule for the candidate location
-						DrawDebugCapsule(GetWorld(),
-							RetryLocation,
-							CapsuleHalfHeight * 1.5f,
-							CapsuleRadius * 1.5f,
-							FQuat::Identity,
-							FColor::White,
-							false,
-							3.0f);
-					}
-					OutTargetLocation = RetryLocation;
-					bOutSuccess = true;
-					HitResults.Empty(); // Clear the array before returning
-					return;
-				}
-			}
-
-			// No valid location found
 			OutTargetLocation = FVector::ZeroVector; // Or some default value
 			bOutSuccess = false;
 		}
@@ -1323,6 +1412,17 @@ void UNewCharacterMovementComponent::GetDashLocation(FVector& OutTargetLocation,
 
 	HitResults.Empty(); // Clear the array before exiting
 }
+
+bool UNewCharacterMovementComponent::CanDashInCurrentState() const
+{
+	// Check if the character can dash based on the current movement state.
+
+	// The character can dash if it is:
+	// // 1. In the falling state (e.g., jumping or in mid-air), or
+	// 2. In the walking state and not crouching.
+	return IsFalling() || (IsMovementMode(MOVE_Walking) && !IsCrouching());
+}
+
 
 #pragma endregion
 
@@ -2187,16 +2287,6 @@ bool UNewCharacterMovementComponent::HasReachedFloor()
 	{
 		ObjectQueryParams.AddObjectTypesToQuery(UEngineTypes::ConvertToCollisionChannel(ObjectType));
 	}
-
-	/*TArray<FHitResult> PossibleFloorHits;
-	GetWorld()->SweepMultiByObjectType(
-		PossibleFloorHits,
-		Start,
-		End,
-		FQuat::Identity,
-		ObjectQueryParams,
-		FCollisionShape::MakeCapsule(CharacterOwner->GetCapsuleComponent()->GetScaledCapsuleRadius(), CharacterOwner->GetCapsuleComponent()->GetScaledCapsuleHalfHeight())
-	);*/
 	TArray<FHitResult> PossibleFloorHits;
 	GetWorld()->SweepMultiByProfile(
 		PossibleFloorHits,
@@ -2370,6 +2460,133 @@ void UNewCharacterMovementComponent::PhysClimb(float deltaTime, int32 Iterations
 }
 
 #pragma endregion
+
+#pragma region Advanced Movement
+
+
+void UNewCharacterMovementComponent::StartCustomAdvancedMovement()
+{
+	ActivateAdvancedMovementFlag((uint8)::EAdvancedMovementFlag::CFLAG_WantsToCustomAdvancedMovement);
+}
+
+void UNewCharacterMovementComponent::StopCustomAdvancedMovement()
+{
+	if (IsAdvancedFlagActive((uint8)EAdvancedMovementFlag::CFLAG_WantsToCustomAdvancedMovement)) ClearAdvancedMovementFlag((uint8)EAdvancedMovementFlag::CFLAG_WantsToCustomAdvancedMovement);
+}
+
+void UNewCharacterMovementComponent::PhysCustomAdvancedMovement(float deltaTime, int32 Iteration)
+{
+	CharOwner->CustomAdvancedMovementPhysics(deltaTime, Iteration);
+}
+
+void UNewCharacterMovementComponent::PreInitializeAdvancedMovement()
+{
+
+	// Check if the owner is valid
+	if (!CharacterOwner)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PreInitializeVault: CharacterOwner is invalid."));
+		return;
+	}
+	// Get the MotionWarpingComponent from the character owner
+
+	UMotionWarpingComponent* MotionWarpingComp = CharacterOwner->FindComponentByClass<UMotionWarpingComponent>();
+
+	if (!MotionWarpingComp)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("MotionWarpingComponent is missing on the character."));
+		return;
+	}
+
+	// Get the vault data from the character owner
+	if (!AdvancedMovementData)	AdvancedMovementData = CharOwner->GetCustomAdvancedMovementData();
+
+	if (!AdvancedMovementData)
+	{
+		PostInitializeAdvancedMovement();
+		return;
+	}
+	FVector AdjustedWarpLocation;
+	FName WarpTargetName;
+	FRotator TargetRotator = (WarpTargetRotations.Num() > 0) ? WarpTargetRotations[0] : CharacterOwner->GetActorRotation();
+
+	// Check the number of warp targets
+	UE_LOG(LogTemp, Warning, TEXT("Number of Warp Targets: %d"), WarpTargetLocations.Num());
+	if (WarpTargetLocations.Num() < 3)
+	{
+		PostInitializeAdvancedMovement();
+		return;
+	}
+	// Use a range-based for loop to iterate through WarpTargetLocations
+	int32 Index = 0;
+	StopMovementImmediately();
+	for (const FVector& WarpLocation : WarpTargetLocations)
+	{
+		// Log the index and warp location (optional, for debugging)
+		UE_LOG(LogTemp, Warning, TEXT("Index: %d, Warp Location: %s"), Index, *WarpLocation.ToString());
+		// Call the function on VaultData with the current warp location or index
+		AdjustedWarpLocation = AdvancedMovementData->AdjustAndUpdateWarpTarget(Index, WarpLocation, CharacterOwner, WarpTargetName);
+		MotionWarpingComp->AddOrUpdateWarpTargetFromLocationAndRotation(WarpTargetName, AdjustedWarpLocation, TargetRotator);
+		// Increment the index manually
+		Index++;
+	}
+}
+
+void UNewCharacterMovementComponent::PostInitializeAdvancedMovement()
+{
+	if (CharacterOwner && CharacterOwner->GetMesh())
+	{
+		UAnimInstance* OwnerAnimInstance = CharacterOwner->GetMesh()->GetAnimInstance();
+		if (OwnerAnimInstance && AdvancedMovementData && OwnerAnimInstance->Montage_IsPlaying(AdvancedMovementData->AdvancedMovementMontage)) OwnerAnimInstance->Montage_Stop(AdvancedMovementData->MontageBlendOutTime, AdvancedMovementData->AdvancedMovementMontage);
+	}
+	AdvancedMovementData = nullptr;
+	WarpTargetLocations.Empty();
+	WarpTargetRotations.Empty();
+	SetMovementMode(MOVE_Walking);
+	SetWallInfo(EWallSide::None, FHitResult());
+	OnVaultStop.Broadcast();
+}
+
+void UNewCharacterMovementComponent::PlayAdvancedMovementMontage()
+{
+	if (CharacterOwner && CharacterOwner->GetMesh())
+	{
+		UAnimInstance* OwnerAnimInstance = CharacterOwner->GetMesh()->GetAnimInstance();
+		if (OwnerAnimInstance)
+		{
+			if (!AdvancedMovementData)
+			{
+				PostInitializeAdvancedMovement();
+				return;
+			}
+
+			UAnimMontage* MovementMontage = AdvancedMovementData->AdvancedMovementMontage;
+			if (!MovementMontage)
+			{
+				PostInitializeAdvancedMovement();
+				return;
+			}
+
+			float PlayRate = AdvancedMovementData->MontagePlayRate;
+			float StartPosition = AdvancedMovementData->MontageStartDuration;
+			OwnerAnimInstance->Montage_Play(MovementMontage, PlayRate, EMontagePlayReturnType::MontageLength, StartPosition);
+
+			// Bind to the montage blend out delegate
+			FOnMontageBlendingOutStarted MontageBlendingOutDelegate;
+			MontageBlendingOutDelegate.BindUObject(this, &UNewCharacterMovementComponent::OnAdvancedMovementEnded);
+			OwnerAnimInstance->Montage_SetBlendingOutDelegate(MontageBlendingOutDelegate, MovementMontage);
+
+			// Optionally, bind an OnCompleted delegate if you need to handle the montage’s natural end
+			OwnerAnimInstance->Montage_SetEndDelegate(MontageBlendingOutDelegate, MovementMontage);
+		}
+	}
+}
+
+void UNewCharacterMovementComponent::OnAdvancedMovementEnded(UAnimMontage* MontageToPlay, bool bIsInterupted)
+{
+	if (AdvancedMovementData && MontageToPlay == AdvancedMovementData->AdvancedMovementMontage && !bIsInterupted)
+		StopCustomAdvancedMovement();
+}
 
 #pragma region Vault
 
@@ -2742,9 +2959,11 @@ void UNewCharacterMovementComponent::EnterVault()
 		if (VaultData) OnVaultInitialize.Broadcast(VaultData);
 		PlayVaultMontage();
 		HHUpdateVault();
-		Multicast_UpdateHHEnterVault();
+		if (CharacterOwner->GetLocalRole() == ROLE_Authority)
+			Multicast_UpdateHHEnterVault();
 		SetMovementMode(MOVE_Custom, CMOVE_Vault);
-		Multicast_PlayVault(VaultData->AdvancedMovementMontage, VaultData->MontagePlayRate, VaultData->MontageStartDuration);
+		if (CharacterOwner->GetLocalRole() == ROLE_Authority)
+			Multicast_PlayVault(VaultData->AdvancedMovementMontage, VaultData->MontagePlayRate, VaultData->MontageStartDuration);
 		OnVaultStart.Broadcast(CurrentWall);
 	}
 	else StopVault();
@@ -3497,7 +3716,90 @@ bool UNewCharacterMovementComponent::CanMantle()
 #endif
 
 	// If the downward trace does not hit anything, return false
-	if (!bDownwardHit) return false;
+	if (!bDownwardHit)
+	{
+		FrontFace.Empty();
+		return false;
+	}
+	FHitResult PreFinal;
+
+	// Calculate the start location for the sweep
+	FVector PreFinalStartLocationZ = DownwardHitResult.Location + CharacterOwner->GetActorUpVector() * CapHH();
+	FVector PreFinalLocationXY = FVector(AVG.X, AVG.Y, AdjustedLocation.Z);
+
+	// Combine the X and Y from PreFinalLocationXY and the Z from PreFinalStartLocationZ
+	FVector PreFinalStartLocation = FVector(PreFinalLocationXY.X, PreFinalLocationXY.Y, PreFinalStartLocationZ.Z) - (Norm * (CapR() + 1));
+
+	// Calculate the end location for the sweep
+	FVector PreFinalEndLocationZ = CharacterOwner->GetActorLocation() + CharacterOwner->GetActorUpVector() * CapHH();
+
+	// Combine the X and Y from PreFinalLocationXY and the Z from PreFinalEndLocationZ
+	FVector PreFinalEndLocation = FVector(PreFinalLocationXY.X, PreFinalLocationXY.Y, PreFinalEndLocationZ.Z) - (Norm * (CapR() + 1));
+
+
+
+	// Pre-final check for enough capsule space
+	bool bPreFinalHit = GetWorld()->SweepSingleByProfile(
+		PreFinal,
+		PreFinalStartLocation,
+		PreFinalEndLocation,
+		FQuat::Identity,
+		TEXT("BlockAll"),
+		FCollisionShape::MakeCapsule(CapR(), CapHH()),
+		GetIgnoreCharacterParams()
+	);
+
+#if WITH_EDITOR
+	// Draw debug shapes for the sweep
+	if (bShowClimbUpDebugTraces) // Assuming bShowSlideDebugTraces controls debug visibility
+	{
+		// Draw the starting capsule
+		DrawDebugCapsule(
+			GetWorld(),
+			PreFinalStartLocation,
+			CapHH(),
+			CapR(),
+			FQuat::Identity,
+			FColor::Red,
+			false,
+			5.0f,
+			0,
+			2.0f
+		);
+
+		// Draw the ending capsule
+		DrawDebugCapsule(
+			GetWorld(),
+			PreFinalEndLocation,
+			CapHH(),
+			CapR(),
+			FQuat::Identity,
+			FColor::Yellow,
+			false,
+			5.0f,
+			0,
+			2.0f
+		);
+
+		// Draw the sweep path line
+		DrawDebugLine(
+			GetWorld(),
+			PreFinalStartLocation,
+			PreFinalEndLocation,
+			FColor::Green,
+			false,
+			5.0f,
+			0,
+			2.0f
+		);
+	}
+#endif
+
+	if (bPreFinalHit)
+	{
+		FrontFace.Empty();
+		return false;
+	}
 
 	// Perform a capsule trace at the downward hit location to ensure enough space
 	FVector CapStart = DownwardHitResult.Location + Upward * CapHH() * 1.1;
@@ -3555,7 +3857,8 @@ void UNewCharacterMovementComponent::EnterMantle()
 			if (MantleData) OnMantleInitialize.Broadcast(MantleData);
 			PlayMantleMontage();
 			SetMovementMode(MOVE_Custom, CMOVE_Mantle);
-			Server_PlayMantle(MantleData->AdvancedMovementMontage, MantleData->MontagePlayRate, MantleData->MontageStartDuration);
+			if (CharacterOwner->GetLocalRole() == ROLE_Authority)
+				Multicast_PlayMantle(MantleData->AdvancedMovementMontage, MantleData->MontagePlayRate, MantleData->MontageStartDuration);
 			OnMantleStart.Broadcast(CurrentWall);
 		}
 		else StopMantle();
@@ -3594,16 +3897,81 @@ bool UNewCharacterMovementComponent::CheckLedgeDuringFall()
 	FVector ForwardDirection = CharacterOwner->GetActorForwardVector();
 
 	// Set the end location for the forward trace
-	FVector EndLocation = StartLocation + (ForwardDirection * 100.0f); // Adjust distance as needed
+	FVector EndLocation = StartLocation + (ForwardDirection * 100.0f); 
 
 	// Perform a forward line trace
 	FHitResult ForwardHitResult;
 	// Setup trace parameters
 	FCollisionQueryParams TraceParams(FName(TEXT("FallingLedgeTrace")), false, CharacterOwner);
-	TraceParams.bTraceComplex = true; // Trace complex collisions if needed
+	TraceParams.bTraceComplex = true;
 
+	FVector PreStart = CharacterOwner->GetActorLocation();
+	FVector PreEnd = PreStart + CharacterOwner->GetActorUpVector() * CapHH() * 2;
+	FCollisionShape CapsuleShape = FCollisionShape::MakeCapsule(CapR(), CapHH());
+	// Perform the capsule sweep
+	FHitResult PreHitResult;
+	bool bHit = GetWorld()->SweepSingleByProfile(
+		PreHitResult,
+		PreStart,
+		PreEnd,
+		FQuat::Identity, 
+		TEXT("BlockAll"), 
+		CapsuleShape,
+		GetIgnoreCharacterParams()
+	);
 
+#if WITH_EDITOR
+	// Draw debug shapes for the sweep
+	if (bShowMantleDebugTraces)
+	{
+		// Draw the starting capsule
+		DrawDebugCapsule(
+			GetWorld(),
+			PreStart,
+			CapHH(),
+			CapR(),
+			FQuat::Identity,
+			FColor::Red,
+			false,
+			-1,
+			0,
+			2.0f
+		);
 
+		// Draw the ending capsule
+		DrawDebugCapsule(
+			GetWorld(),
+			PreEnd,
+			CapHH(),
+			CapR(),
+			FQuat::Identity,
+			FColor::Yellow,
+			false,
+			-1,
+			0,
+			2.0f
+		);
+
+		// Draw the sweep path line
+		DrawDebugLine(
+			GetWorld(),
+			PreStart,
+			PreEnd,
+			FColor::Green,
+			false,
+			-1,
+			0,
+			2.0f
+		);
+	}
+#endif
+
+	if (bHit)
+	{
+		WarpTargetLocations.Empty();
+		WarpTargetRotations.Empty();
+		return false;
+	}
 	FCollisionObjectQueryParams ObjectQueryParams;
 	for (TEnumAsByte<EObjectTypeQuery> ObjectType : MantlableSurfaceTraceTypes)
 	{
@@ -3650,6 +4018,8 @@ bool UNewCharacterMovementComponent::CheckLedgeDuringFall()
 #endif
 	if (bNewDownwardHit)
 	{
+		WarpTargetLocations.Empty();
+		WarpTargetRotations.Empty();
 		return false;
 	}
 
@@ -3686,7 +4056,7 @@ bool UNewCharacterMovementComponent::CheckLedgeDuringFall()
 			FVector WarpOne = NormForwardHitResult.Location;
 			WarpTargetLocations.Add(WarpOne);
 #if WITH_EDITOR
-			if (bShowMantleDebugTraces) DrawDebugSphere(GetWorld(), WarpOne, 10.0f, 12, FColor::White, false, 5, 0, 1);
+			if (bShowMantleDebugTraces) DrawDebugSphere(GetWorld(), WarpOne, 10.0f, 12, FColor::White, false, -1, 0, 1);
 #endif
 			const FVector UpWard = CharacterOwner->GetActorUpVector();
 			const FVector NewStartMant = WarpOne + Norm * CapR() * 1.5 + UpWard * CapHH() * 1.1;
@@ -3703,7 +4073,7 @@ bool UNewCharacterMovementComponent::CheckLedgeDuringFall()
 #if WITH_EDITOR
 			if (bShowMantleDebugTraces)
 			{
-				DrawDebugCapsule(GetWorld(), NewStartMant, CapHH(), CapR(), FQuat::Identity, FColor::Magenta, false, 1, 0, 1);
+				DrawDebugCapsule(GetWorld(), NewStartMant, CapHH(), CapR(), FQuat::Identity, FColor::Magenta, false, -1, 0, 1);
 			}
 #endif
 
@@ -3726,7 +4096,7 @@ bool UNewCharacterMovementComponent::CheckLedgeDuringFall()
 				if (bFinalHit)
 				{
 #if WITH_EDITOR
-					if (bShowMantleDebugTraces) DrawDebugSphere(GetWorld(), FinalHitResult.Location, 10.0f, 12, FColor::White, false, 5, 0, 1);
+					if (bShowMantleDebugTraces) DrawDebugSphere(GetWorld(), FinalHitResult.Location, 10.0f, 12, FColor::White, false, -1, 0, 1);
 #endif
 					WarpTargetLocations.Add(FinalHitResult.Location);
 					SetWallInfo(EWallSide::Front, ForwardHitResult);
@@ -3935,8 +4305,95 @@ bool UNewCharacterMovementComponent::UpdateMantleWarpLocations()
 #endif
 
 	// If the downward trace does not hit anything, return false
-	if (!bDownwardHit) return false;
+	if (!bDownwardHit)
+	{
+		FrontFace.Empty();
+		WarpTargetRotations.Empty();
+		WarpTargetLocations.Empty();
+		return false;
+	}
 
+	FHitResult PreFinal;
+
+	// Calculate the start location for the sweep
+	FVector PreFinalStartLocationZ = DownwardHitResult.Location + CharacterOwner->GetActorUpVector() * CapHH();
+	FVector PreFinalLocationXY = FVector(AVG.X, AVG.Y, AdjustedLocation.Z);
+
+	// Combine the X and Y from PreFinalLocationXY and the Z from PreFinalStartLocationZ
+	FVector PreFinalStartLocation = FVector(PreFinalLocationXY.X, PreFinalLocationXY.Y, PreFinalStartLocationZ.Z) - (Norm * (CapR() + 1));
+
+	// Calculate the end location for the sweep
+	FVector PreFinalEndLocationZ = CharacterOwner->GetActorLocation() + CharacterOwner->GetActorUpVector() * CapHH();
+
+	// Combine the X and Y from PreFinalLocationXY and the Z from PreFinalEndLocationZ
+	FVector PreFinalEndLocation = FVector(PreFinalLocationXY.X, PreFinalLocationXY.Y, PreFinalEndLocationZ.Z) - (Norm * (CapR() + 1));
+
+
+
+	// Pre-final check for enough capsule space
+	bool bPreFinalHit = GetWorld()->SweepSingleByProfile(
+		PreFinal,
+		PreFinalStartLocation,
+		PreFinalEndLocation,
+		FQuat::Identity,
+		TEXT("BlockAll"),
+		FCollisionShape::MakeCapsule(CapR(), CapHH()),
+		GetIgnoreCharacterParams()
+	);
+
+#if WITH_EDITOR
+	// Draw debug shapes for the sweep
+	if (bShowMantleDebugTraces) 
+	{
+		// Draw the starting capsule
+		DrawDebugCapsule(
+			GetWorld(),
+			PreFinalStartLocation,
+			CapHH(),
+			CapR(),
+			FQuat::Identity,
+			FColor::Red,
+			false,
+			5.0f,
+			0,
+			2.0f
+		);
+
+		// Draw the ending capsule
+		DrawDebugCapsule(
+			GetWorld(),
+			PreFinalEndLocation,
+			CapHH(),
+			CapR(),
+			FQuat::Identity,
+			FColor::Yellow,
+			false,
+			5.0f,
+			0,
+			2.0f
+		);
+
+		// Draw the sweep path line
+		DrawDebugLine(
+			GetWorld(),
+			PreFinalStartLocation,
+			PreFinalEndLocation,
+			FColor::Green,
+			false,
+			5.0f,
+			0,
+			2.0f
+		);
+	}
+#endif
+
+	if (bPreFinalHit)
+	{
+		FrontFace.Empty();
+		WarpTargetRotations.Empty();
+		WarpTargetLocations.Empty();
+		return false;
+	}
 	// Perform a capsule trace at the downward hit location to ensure enough space
 	FVector CapStart = DownwardHitResult.Location + Upward * CapHH() * 1.1;
 
@@ -4110,9 +4567,12 @@ void UNewCharacterMovementComponent::EnterClimbUp()
 		if (ClimbUpData)OnClimbUpInitialize.Broadcast(ClimbUpData);
 		PlayClimbUpMontage();
 		SetMovementMode(MOVE_Custom, CMOVE_ClimbUp);
-		Server_PlayClimbUp(ClimbUpData->AdvancedMovementMontage, ClimbUpData->MontagePlayRate, ClimbUpData->MontageStartDuration);
+		if (CharacterOwner->GetLocalRole() == ROLE_Authority)
+			Multicast_PlayClimbUp(ClimbUpData->AdvancedMovementMontage, ClimbUpData->MontagePlayRate, ClimbUpData->MontageStartDuration);
 		OnClimbUpStart.Broadcast(CurrentWall);
 	}
+	else
+		StopClimbUp();
 }
 
 void UNewCharacterMovementComponent::StopClimbUp()
@@ -4302,6 +4762,84 @@ bool UNewCharacterMovementComponent::CanClimbUp()
 	// If the downward trace does not hit anything, return false
 	if (!bDownwardHit || !DownwardHitResult.IsValidBlockingHit()) return false;
 
+	FHitResult PreFinal;
+
+	// Calculate the start location for the sweep
+	FVector PreFinalStartLocationZ = DownwardHitResult.Location + CharacterOwner->GetActorUpVector() * CapHH();
+	FVector PreFinalLocationXY = FVector(AVG.X, AVG.Y, AdjustedLocation.Z);
+
+	// Combine the X and Y from PreFinalLocationXY and the Z from PreFinalStartLocationZ
+	FVector PreFinalStartLocation = FVector(PreFinalLocationXY.X, PreFinalLocationXY.Y, PreFinalStartLocationZ.Z) - (Norm * (CapR() + 1));
+
+	// Calculate the end location for the sweep
+	FVector PreFinalEndLocationZ = CharacterOwner->GetActorLocation() + CharacterOwner->GetActorUpVector() * CapHH();
+
+	// Combine the X and Y from PreFinalLocationXY and the Z from PreFinalEndLocationZ
+	FVector PreFinalEndLocation = FVector(PreFinalLocationXY.X, PreFinalLocationXY.Y, PreFinalEndLocationZ.Z) - (Norm * (CapR() + 1));
+
+
+	// Pre-final check for enough capsule space
+	bool bPreFinalHit = GetWorld()->SweepSingleByProfile(
+		PreFinal,
+		PreFinalStartLocation,
+		PreFinalEndLocation,
+		FQuat::Identity,
+		TEXT("BlockAll"),
+		FCollisionShape::MakeCapsule(CapR(), CapHH()),
+		GetIgnoreCharacterParams()
+	);
+
+#if WITH_EDITOR
+	// Draw debug shapes for the sweep
+	if (bShowClimbUpDebugTraces)
+	{
+		// Draw the starting capsule
+		DrawDebugCapsule(
+			GetWorld(),
+			PreFinalStartLocation,
+			CapHH(),
+			CapR(),
+			FQuat::Identity,
+			FColor::Red,
+			false,
+			5.0f,
+			0,
+			2.0f
+		);
+
+		// Draw the ending capsule
+		DrawDebugCapsule(
+			GetWorld(),
+			PreFinalEndLocation,
+			CapHH(),
+			CapR(),
+			FQuat::Identity,
+			FColor::Yellow,
+			false,
+			5.0f,
+			0,
+			2.0f
+		);
+
+		// Draw the sweep path line
+		DrawDebugLine(
+			GetWorld(),
+			PreFinalStartLocation,
+			PreFinalEndLocation,
+			FColor::Green,
+			false,
+			5.0f,
+			0,
+			2.0f
+		);
+	}
+#endif
+
+	if (bPreFinalHit)
+	{
+		FrontFace.Empty();
+		return false;
+	}
 	// Perform a capsule trace at the downward hit location to ensure enough space
 	FVector CapStart = DownwardHitResult.Location + Upward * CapHH() * 1.1;
 
@@ -4499,6 +5037,9 @@ bool UNewCharacterMovementComponent::UpdateClimbUpWarpLocations()
 	FVector FrontOne = FrontFace[0];
 	FVector FrontLast = FrontFace[FrontFace.Num() - 1];
 
+
+
+
 	float DiffLower = FMath::Abs(FrontOne.Z - AdjustedLocationFinal.Z);
 	float DiffUpper = FMath::Abs(FrontLast.Z - AdjustedLocationFinal.Z);
 
@@ -4539,6 +5080,87 @@ bool UNewCharacterMovementComponent::UpdateClimbUpWarpLocations()
 	if (bShowClimbUpDebugTraces) DrawDebugLine(GetWorld(), DownwardStart, DownwardEnd, FColor::Blue, false, 5, 0, 1);
 #endif
 
+	FHitResult PreFinal;
+
+	// Calculate the start location for the sweep
+	FVector PreFinalStartLocationZ = DownwardHitResult.Location + CharacterOwner->GetActorUpVector() * CapHH();
+	FVector PreFinalLocationXY = FVector(AVG.X, AVG.Y, AdjustedLocation.Z);
+
+	// Combine the X and Y from PreFinalLocationXY and the Z from PreFinalStartLocationZ
+	FVector PreFinalStartLocation = FVector(PreFinalLocationXY.X, PreFinalLocationXY.Y, PreFinalStartLocationZ.Z) - (Norm * (CapR() + 1));
+
+	// Calculate the end location for the sweep
+	FVector PreFinalEndLocationZ = CharacterOwner->GetActorLocation() + CharacterOwner->GetActorUpVector() * CapHH();
+
+	// Combine the X and Y from PreFinalLocationXY and the Z from PreFinalEndLocationZ
+	FVector PreFinalEndLocation = FVector(PreFinalLocationXY.X, PreFinalLocationXY.Y, PreFinalEndLocationZ.Z) - (Norm * (CapR() + 1));
+
+
+
+	// Pre-final check for enough capsule space
+	bool bPreFinalHit = GetWorld()->SweepSingleByProfile(
+		PreFinal,
+		PreFinalStartLocation,
+		PreFinalEndLocation,
+		FQuat::Identity,
+		TEXT("BlockAll"), 
+		FCollisionShape::MakeCapsule(CapR(), CapHH()),
+		GetIgnoreCharacterParams()
+	);
+
+#if WITH_EDITOR
+	// Draw debug shapes for the sweep
+	if (bShowClimbUpDebugTraces) 
+	{
+		// Draw the starting capsule
+		DrawDebugCapsule(
+			GetWorld(),
+			PreFinalStartLocation,
+			CapHH(),
+			CapR(),
+			FQuat::Identity,
+			FColor::Red,
+			false,
+			5.0f,
+			0,
+			2.0f
+		);
+
+		// Draw the ending capsule
+		DrawDebugCapsule(
+			GetWorld(),
+			PreFinalEndLocation,
+			CapHH(),
+			CapR(),
+			FQuat::Identity,
+			FColor::Yellow,
+			false,
+			5.0f,
+			0,
+			2.0f
+		);
+
+		// Draw the sweep path line
+		DrawDebugLine(
+			GetWorld(),
+			PreFinalStartLocation,
+			PreFinalEndLocation,
+			FColor::Green,
+			false,
+			5.0f,
+			0,
+			2.0f
+		);
+	}
+#endif
+
+	if (bPreFinalHit)
+	{
+		FrontFace.Empty();
+		WarpTargetRotations.Empty();
+		WarpTargetLocations.Empty();
+		return false;
+	}
 	// If the downward trace does not hit anything, return false
 	if (!bDownwardHit || !DownwardHitResult.IsValidBlockingHit()) return false;
 
@@ -4698,6 +5320,8 @@ void UNewCharacterMovementComponent::PhysClimbUp(float deltaTime, int32 Iteratio
 	PhysFlying(deltaTime, Iterations);
 }
 
+
+#pragma endregion
 
 #pragma endregion
 
@@ -4884,6 +5508,7 @@ bool UNewCharacterMovementComponent::IsFastSwimming() const
 	return  IsMovementMode(MOVE_Swimming) && IsFastFlagActive((uint8)EFastMovementFlag::CFLAG_WantsToFastSwim);
 }
 
+
 #pragma endregion
 
 #pragma region Helper
@@ -4925,6 +5550,18 @@ void UNewCharacterMovementComponent::SetWallInfo(EWallSide NewWallSide, const FH
 	// Update CurrentWallInfo with the new values
 	CurrentWall.WallSide = NewWallSide;
 	CurrentWall.WallHit = NewWallHit;
+}
+
+float UNewCharacterMovementComponent::GetCurrentFloorAngle() const
+{
+	// Calculate the angle in degrees between the floor normal and the up vector
+	if(IsMovingOnGround())
+		return  FMath::RadiansToDegrees(acosf(FVector::DotProduct(
+		CurrentFloor.HitResult.Normal,
+		CharacterOwner->GetActorForwardVector()
+	)));
+	else
+		return 0.0f;
 }
 
 bool UNewCharacterMovementComponent::HandlePendingLaunch()
@@ -5369,7 +6006,8 @@ void UNewCharacterMovementComponent::UpdateCharacterStateBeforeMovement(float De
 		else if ((!IsExtendedFlagActive((uint8)EExtendedMovementFlag::CFLAG_WantsToFly) && MovementMode == MOVE_Flying))
 		{
 			SetMovementMode(MOVE_Falling);
-			CharacterOwner->LaunchCharacter(-2 * FlightEnterImpulse, false, true);
+			if(!IsSpecialFlagActive((uint8)ESpecialMovementFlag::CFLAG_WantsToClimb))
+				CharacterOwner->LaunchCharacter(-2 * FlightEnterImpulse, false, true);
 			OnFlyStop.Broadcast();
 		}
 		if (MovementMode == MOVE_Walking && IsExtendedFlagActive((uint8)EExtendedMovementFlag::CFLAG_WantsToSlide) && !IsSliding())
@@ -5378,17 +6016,23 @@ void UNewCharacterMovementComponent::UpdateCharacterStateBeforeMovement(float De
 		}
 		else if (IsSliding() && !IsExtendedFlagActive((uint8)EExtendedMovementFlag::CFLAG_WantsToSlide)) ExitSlide();
 
-		if (MovementMode == MOVE_Walking && IsExtendedFlagActive((uint8)EExtendedMovementFlag::CFLAG_WantsToProne) &&
-			!IsProning() && CanProne()) EnterProne();
-		else if ((!IsExtendedFlagActive((uint8)EExtendedMovementFlag::CFLAG_WantsToProne) && IsProning()))ExitProne();
-		if (IsFalling() && IsProning()) StopProne();
+		if (CanAutoSlide())
+			StartSlide();
+		if (MovementMode == MOVE_Walking &&
+			IsExtendedFlagActive((uint8)EExtendedMovementFlag::CFLAG_WantsToProne) &&
+			!IsProning() && CanProne())
+			EnterProne();
+		else if ((!IsExtendedFlagActive((uint8)EExtendedMovementFlag::CFLAG_WantsToProne)
+			&& IsProning()))
+			ExitProne();
 
 		if (IsFastFlagActive((uint8)EFastMovementFlag::CFLAG_WantsToDash) && !IsDashing())
 		{
-			bool ShouldDash = false;;
+			bool ShouldDash = false;
 			GetDashLocation(DashLocation, ShouldDash);
 			if (ShouldDash) SetMovementMode(MOVE_Custom, CMOVE_Dash);
-			OnDashStart.Broadcast();
+			else StopDash();
+			OnDashStart.Broadcast(DashLocation);
 
 		}
 		else if (!IsFastFlagActive((uint8)EFastMovementFlag::CFLAG_WantsToDash) && IsDashing())
@@ -5436,18 +6080,17 @@ void UNewCharacterMovementComponent::UpdateCharacterStateBeforeMovement(float De
 			{
 				if (IsFlying())
 					StopFly();
-				bOrientRotationToMovement = false;
 				SetMovementMode(MOVE_Custom, CMOVE_Climb);
 				OnClimbStart.Broadcast(CurrentWall);
 			}
 		}
 		else if (!IsSpecialFlagActive((uint8)ESpecialMovementFlag::CFLAG_WantsToClimb) && IsClimbing())
 		{
-			bOrientRotationToMovement = true;
 			SetMovementMode(MOVE_Walking);
 			SetWallInfo(EWallSide::None, FHitResult());
 			OnClimbStop.Broadcast();
 		}
+
 	}
 
 	Super::UpdateCharacterStateBeforeMovement(DeltaSeconds);
@@ -5456,9 +6099,20 @@ void UNewCharacterMovementComponent::UpdateCharacterStateBeforeMovement(float De
 
 void UNewCharacterMovementComponent::UpdateCharacterStateAfterMovement(float DeltaSeconds)
 {
-	if ((!IsExtendedFlagActive((uint8)EExtendedMovementFlag::CFLAG_WantsToProne)
-		&& IsProning()) && CharacterOwner->GetLocalRole() != ROLE_SimulatedProxy) ExitProne();
 	Super::UpdateCharacterStateAfterMovement(DeltaSeconds);
+	/**/if(CharacterOwner->GetLocalRole() != ROLE_SimulatedProxy)
+	{
+		if (MovementMode == MOVE_Walking &&
+			IsExtendedFlagActive((uint8)EExtendedMovementFlag::CFLAG_WantsToProne) &&
+			!IsProning() && CanProne())
+			EnterProne();
+		else if ((!IsExtendedFlagActive((uint8)EExtendedMovementFlag::CFLAG_WantsToProne)
+			&& IsProning()))
+			ExitProne();
+
+		if(IsProning()&&IsCrouching())
+			bWantsToCrouch = false;
+	}
 }
 
 void UNewCharacterMovementComponent::OnMovementModeChanged(EMovementMode PreviousMovementMode, uint8 PreviousCustomMode)
@@ -5577,12 +6231,12 @@ FVector UNewCharacterMovementComponent::ConstrainAnimRootMotionVelocity(const FV
 
 bool UNewCharacterMovementComponent::DoJump(bool bReplayingMoves)
 {
-
 	if (IsSliding())
 	{
 		StopSlide();
 		ExitSlide();
 	}
+
 	if (Super::DoJump(bReplayingMoves))
 	{
 		if (IsWallRunning())
@@ -5598,6 +6252,7 @@ bool UNewCharacterMovementComponent::DoJump(bool bReplayingMoves)
 #endif
 			Velocity += WallHit.Normal * MaxWallRunJumpOffForce;
 		}
+		
 		return true;
 	}
 	return false;

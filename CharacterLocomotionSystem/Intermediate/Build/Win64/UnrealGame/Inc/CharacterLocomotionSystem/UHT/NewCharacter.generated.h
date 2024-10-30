@@ -36,6 +36,8 @@ class UVaultPrimaryDataAsset;
 	DECLARE_FUNCTION(execGetVaultData); \
 	DECLARE_FUNCTION(execCanCustomAdvancedMovement); \
 	DECLARE_FUNCTION(execCustomAdvancedMovementPhysics); \
+	DECLARE_FUNCTION(execExitCustomAdvancedMovement); \
+	DECLARE_FUNCTION(execEnterCustomAdvancedMovement); \
 	DECLARE_FUNCTION(execStopCustomAdvancedMovement); \
 	DECLARE_FUNCTION(execStartCustomAdvancedMovement); \
 	DECLARE_FUNCTION(execGetCustomAdvancedMovementData); \
