@@ -20,8 +20,8 @@ You can find the sample project here:
 **[Sample Project Showcase](https://drive.google.com/drive/folders/1DdGjiWPIfIX7JbedweNz_dY-VXvpT5hz?usp=sharing)**
 
 ## Project Documentation
-For detailed visual documentation of the project, including images only, refer to the following PDF:  
-**[Project Image PDF](https://docs.google.com/document/d/1ZGNJ7G3xG42ZnxNOpL2sVa1HN4Bb6B7Bkgt0RbDWhMM/edit?usp=sharing)**
+For detailed visual documentation of the project, including images and additional information,refer to the following PDF:
+**[Project Documentation](https://docs.google.com/document/d/1ZGNJ7G3xG42ZnxNOpL2sVa1HN4Bb6B7Bkgt0RbDWhMM/edit?usp=sharing)**
 
 ## Movement Modes
 The Character Locomotion System supports the following advanced movement modes:
