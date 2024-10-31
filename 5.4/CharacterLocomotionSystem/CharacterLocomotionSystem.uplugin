@@ -1,0 +1,33 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "CharacterLocomotionSystem",
+	"Description": "This Plugin includes extended version of the Character Movement Component.",
+	"Category": "Gameplay",
+	"CreatedBy": "SHANKHARAJ DATTA",
+	"CreatedByURL": "https://www.linkedin.com/in/shankharaj-datta-45921a28a/",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"EngineVersion": "5.4.0",
+	"CanContainContent": true,
+	"IsExperimentalVersion": true,
+	"Installed": true,
+	"Modules": [
+		{
+			"Name": "CharacterLocomotionSystem",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"PlatformAllowList": [
+				"Win64"
+			]
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "MotionWarping",
+			"Enabled": true
+		}
+	]
+}
