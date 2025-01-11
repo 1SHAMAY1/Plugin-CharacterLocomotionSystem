@@ -37,7 +37,7 @@
 class UAnimMontage;
 class UMotionWarpingComponent;
 class ANewCharacter;
-class UAdvancedPrimaryDataAsset;
+class UAdvancedMovementPrimaryDataAsset;
 class UVaultPrimaryDataAsset;
 class UMantlePrimaryDataAsset;
 class UClimbUpPrimaryDataAsset;
@@ -47,6 +47,22 @@ class UAnimInstance;
 #pragma endregion
 
 #pragma region MovementFlags
+
+/** MoveComponent options, stored as bitflags */
+UENUM(BlueprintType)
+enum EMoveComponentBPFlags
+{
+	/** Default options */
+	BPMOVECOMP_NoFlags = 0x0000,
+	/** Ignore collisions with things the Actor is based on */
+	BPMOVECOMP_IgnoreBases = 0x0001,
+	/** When moving this component, do not move the physics representation. Used internally to avoid looping updates when syncing with physics. */
+	BPMOVECOMP_SkipPhysicsMove = 0x0002,
+	/** Never ignore initial blocking overlaps during movement, which are usually ignored when moving out of an object. MOVECOMP_IgnoreBases is still respected. */
+	BPMOVECOMP_NeverIgnoreBlockingOverlaps = 0x0004,
+	/** avoid dispatching blocking hit events when the hit started in penetration (and is not ignored, see MOVECOMP_NeverIgnoreBlockingOverlaps). */
+	BpMOVECOMP_DisableBlockingOverlapDispatch = 0x0008,
+};
 
 enum class EFastMovementFlag : uint8
 {
@@ -214,6 +230,20 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnClimbStop);
  * Provides information about the current wall.
  */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnClimbReachedUpLedge, FCurrentWallInfo, CurrentWall);
+
+/**
+ * Triggered when the character starts vaulting.
+ * Provides information about the current wall being vaulted over.
+ */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCustomAdvancedMovementStart, FCurrentWallInfo, CurrentWall);
+
+/** Triggered when the character stops vaulting. */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCustomAdvancedMovementStop);
+
+/**
+ * Triggered to initialize vaulting with specified vault data.
+ */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCustomAdvancedMovementInitialized, UAdvancedMovementPrimaryDataAsset*, CustommovementData);
 
 /**
  * Triggered when the character starts vaulting.
@@ -397,6 +427,8 @@ public:
 	virtual bool CanCrouchInCurrentState() const override;
 	virtual void Crouch(bool bClientSimulation = false) override;
 	virtual void UnCrouch(bool bClientSimulation = false) override;
+
+	void UnCrouchOwner();
 	virtual FVector ConstrainAnimRootMotionVelocity(const FVector& RootMotionVelocity, const FVector& CurrentVelocity) const override;
 	virtual void PhysFlying(float deltaTime, int32 Iterations);
 	virtual bool DoJump(bool bReplayingMoves);
@@ -499,6 +531,19 @@ public:
 	void SetWallInfo(EWallSide NewWallSide, const FHitResult& NewWallHit);
 
 	/**
+	 * Safely moves the updated component using the specified delta and rotation, with optional sweeping and teleportation.
+	 * This function is callable from Blueprints and allows handling of collisions during movement.
+	 *
+	 * @param Delta      The translation vector to move the component by.
+	 * @param NewRotation The new rotation to apply to the component.
+	 * @param bSweep     Whether to sweep (trace) for obstacles during the movement.
+	 * @param OutHit     The hit result populated if the movement is obstructed by a blocking hit.
+	 * @param Teleport   The teleportation type, determining whether physics interactions should occur during the move.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "CharacterMovement")
+	void BP_SafeMoveUpdatedComponent(const FVector& Delta, const FQuat& NewRotation, bool bSweep, FHitResult& OutHit, ETeleportType Teleport);
+
+	/**
 	 * Retrieves the current angle of the floor relative to the character's up vector.
 	 * This function is useful for determining the slope of the terrain the character is currently standing on.
 	 *
@@ -506,6 +551,93 @@ public:
 	 */
 	UFUNCTION(BlueprintPure, Category = "CharacterMovement")
 	float GetCurrentFloorAngle() const;
+
+	/**
+	 * Retrieves the minimum allowed tick time for the character movement component.
+	 * This value ensures that the component does not update more frequently than the specified interval,
+	 * helping to prevent performance issues due to overly frequent updates.
+	 *
+	 * @return The minimum tick time, in seconds, as a float.
+	 */
+	UFUNCTION(BlueprintPure, Category = "CharacterMovement")
+	float GetMinTickTime() const;
+
+	/**
+	 * Restores the character's velocity to its state before any additive root motion was applied.
+	 * This function is useful for cases where you want to reset the velocity after temporary modifications
+	 * by root motion, ensuring that the character's original movement velocity is preserved.
+	 *
+	 * This function can be called from Blueprints.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "CharacterMovement")
+	void BP_RestorePreAdditiveRootMotionVelocity();
+
+	/**
+	 * Checks if the current root motion has an override velocity.
+	 * This function is Blueprint-pure, meaning it does not modify the state and can be used as a condition in Blueprints.
+	 *
+	 * @return True if there is an override velocity in the current root motion, false otherwise.
+	 */
+	UFUNCTION(BlueprintPure, Category = "CharacterMovement")
+	bool BP_HasOverrideVelocity() const;
+
+	/**
+	 * Determines if the character currently has animation-based root motion active.
+	 * This function is Blueprint-pure.
+	 *
+	 * @return True if animation root motion is active, false otherwise.
+	 */
+	UFUNCTION(BlueprintPure, Category = "CharacterMovement")
+	bool BP_HasAnimRootMotion();
+
+	/**
+	 * Applies the current root motion to the velocity of the character for the given frame.
+	 * This function is callable from Blueprints.
+	 *
+	 * @param DeltaTime The time step for the current frame, used to calculate the applied motion.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "CharacterMovement")
+	void BP_ApplyRootMotionToVelocity(float DeltaTime);
+
+	/**
+	 * Handles the impact of the character with a surface or object during movement.
+	 * This function is callable from Blueprints.
+	 *
+	 * @param Impact The hit result containing details of the impact.
+	 * @param TimeSlice The time slice of the movement step that led to the impact.
+	 * @param MoveDelta The movement delta attempted before the impact occurred.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "CharacterMovement")
+	void BP_HandleImpact(const FHitResult& Impact, float TimeSlice, const FVector& MoveDelta);
+
+	/**
+	 * Slides the character along a surface based on the given movement delta and normal.
+	 * This function is callable from Blueprints.
+	 *
+	 * @param Delta The desired movement vector.
+	 * @param Time The time slice of the movement.
+	 * @param InNormal The normal of the surface being slid along.
+	 * @param Hit The hit result containing details of any collision encountered during sliding.
+	 * @param bHandleImpact Whether to handle impacts during the slide.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "CharacterMovement")
+	void BP_SlideAlongSurface(const FVector& Delta, float Time, const FVector& InNormal, FHitResult& Hit, bool bHandleImpact);
+
+
+	/**
+	 * Moves the specified component by the given delta and applies a new rotation.
+	 *
+	 * @param Component   The scene component to move.
+	 * @param Delta       The translation vector to apply.
+	 * @param NewRotation The new rotation to apply to the component.
+	 * @param bSweep      Whether to sweep for collisions during the move.
+	 * @param OutHit      The result of any blocking collision that occurs if bSweep is true.
+	 * @param MoveFlags   Flags controlling the move behavior.
+	 * @param Teleport    The teleportation type (whether to teleport physics bodies or not).
+	 * @return            True if the move was successful, false if a collision occurred.
+	 */
+	UFUNCTION(BlueprintCallable,Category="CharacterMovement")
+	static bool BP_MoveComponent(USceneComponent* Component, const FVector& Delta, const FQuat& NewRotation, bool bSweep, UPARAM(ref) FHitResult& OutHit, EMoveComponentBPFlags MoveFlags, ETeleportType Teleport);
 
 	/**
 	 * Initiates fast movement for the character.
@@ -563,7 +695,7 @@ public:
 	 *
 	 * @return True if the character is in custom extended movement; false otherwise.
 	 */
-	UFUNCTION(Category = "CharacterMovement|Extended")
+	UFUNCTION(BlueprintPure, Category = "CharacterMovement|Extended")
 	bool IsInCustomExtended() const;
 
 
@@ -1771,6 +1903,16 @@ public:
 
 #pragma region Parameters
 
+	UPROPERTY(BlueprintAssignable, BlueprintReadWrite, Category = "Character Movement|Advanced")
+	FOnCustomAdvancedMovementStart OnCustomAdvancedMovementStart;
+
+	UPROPERTY(BlueprintAssignable, BlueprintReadWrite, Category = "Character Movement|Advanced")
+	FOnCustomAdvancedMovementInitialized OnCustomAdvancedMovementInitialized;
+
+	UPROPERTY(BlueprintAssignable, BlueprintReadWrite, Category = "Character Movement|Advanced")
+	FOnCustomAdvancedMovementStop OnCustomAdvancedMovementStop;
+
+	
 	/**
 	 * Reference to a data asset containing advanced movement configuration.
 	 * This asset holds various settings and parameters that influence the
@@ -1797,6 +1939,8 @@ public:
 	 */
 	UPROPERTY(BlueprintReadWrite, Category = "CharacterMovement|Advanced")
 	TArray<FRotator> WarpTargetRotations;
+
+
 
 #pragma endregion
 
@@ -1867,7 +2011,13 @@ public:
 	 *
 	 * @return True if the character is in a custom advanced movement state; false otherwise.
 	 */
+	UFUNCTION(BlueprintPure,Category="CharcterMovement|AdvancedMovement|Custom")
 	bool IsInCustomAdvancedMovement() const;
+
+
+	void BroadcastCustomAdvancedMovementStart();
+
+	void BroadcastCustomAdvancedMovementInitialized(UAdvancedMovementPrimaryDataAsset* CustomAdvancedData);
 
 
 #pragma endregion
@@ -2449,6 +2599,8 @@ private:
 	 * Timer handle for checking ledge availability during a fall.
 	 */
 	FTimerHandle CheckLedgeDuringFallTimerHandle;
+
+	FTimerHandle UnCrouchTimerHandle;
 
 	/**
 	 * Stores results from traces to detect climbable surfaces.

@@ -83,6 +83,13 @@ void EmptyLinkFunctionForGeneratedCodeNewCharacter() {}
 		*(UVaultPrimaryDataAsset**)Z_Param__Result=P_THIS->GetVaultData_Implementation();
 		P_NATIVE_END;
 	}
+	DEFINE_FUNCTION(ANewCharacter::execAddAndUpdateCustomAdvancedWarpTargets)
+	{
+		P_FINISH;
+		P_NATIVE_BEGIN;
+		P_THIS->AddAndUpdateCustomAdvancedWarpTargets_Implementation();
+		P_NATIVE_END;
+	}
 	DEFINE_FUNCTION(ANewCharacter::execGetMaxCustomAdvancedSpeed)
 	{
 		P_FINISH;
@@ -281,6 +288,20 @@ void EmptyLinkFunctionForGeneratedCodeNewCharacter() {}
 		*(bool*)Z_Param__Result=P_THIS->Fly();
 		P_NATIVE_END;
 	}
+	DEFINE_FUNCTION(ANewCharacter::execGetMaxCustomExtendedDeceleration)
+	{
+		P_FINISH;
+		P_NATIVE_BEGIN;
+		*(float*)Z_Param__Result=P_THIS->GetMaxCustomExtendedDeceleration_Implementation();
+		P_NATIVE_END;
+	}
+	DEFINE_FUNCTION(ANewCharacter::execGetMaxCustomExtendedAcceleration)
+	{
+		P_FINISH;
+		P_NATIVE_BEGIN;
+		*(float*)Z_Param__Result=P_THIS->GetMaxCustomExtendedAcceleration_Implementation();
+		P_NATIVE_END;
+	}
 	DEFINE_FUNCTION(ANewCharacter::execGetMaxCustomExtendedSpeed)
 	{
 		P_FINISH;
@@ -430,6 +451,26 @@ void EmptyLinkFunctionForGeneratedCodeNewCharacter() {}
 		{
 		}
 	};
+	struct NewCharacter_eventGetMaxCustomExtendedAcceleration_Parms
+	{
+		float ReturnValue;
+
+		/** Constructor, initializes return property only **/
+		NewCharacter_eventGetMaxCustomExtendedAcceleration_Parms()
+			: ReturnValue(0)
+		{
+		}
+	};
+	struct NewCharacter_eventGetMaxCustomExtendedDeceleration_Parms
+	{
+		float ReturnValue;
+
+		/** Constructor, initializes return property only **/
+		NewCharacter_eventGetMaxCustomExtendedDeceleration_Parms()
+			: ReturnValue(0)
+		{
+		}
+	};
 	struct NewCharacter_eventGetMaxCustomExtendedSpeed_Parms
 	{
 		float ReturnValue;
@@ -470,6 +511,11 @@ void EmptyLinkFunctionForGeneratedCodeNewCharacter() {}
 		{
 		}
 	};
+	static FName NAME_ANewCharacter_AddAndUpdateCustomAdvancedWarpTargets = FName(TEXT("AddAndUpdateCustomAdvancedWarpTargets"));
+	void ANewCharacter::AddAndUpdateCustomAdvancedWarpTargets()
+	{
+		ProcessEvent(FindFunctionChecked(NAME_ANewCharacter_AddAndUpdateCustomAdvancedWarpTargets),NULL);
+	}
 	static FName NAME_ANewCharacter_CanCustomAdvancedMovement = FName(TEXT("CanCustomAdvancedMovement"));
 	bool ANewCharacter::CanCustomAdvancedMovement()
 	{
@@ -548,6 +594,20 @@ void EmptyLinkFunctionForGeneratedCodeNewCharacter() {}
 		ProcessEvent(FindFunctionChecked(NAME_ANewCharacter_GetMaxCustomAdvancedSpeed),&Parms);
 		return Parms.ReturnValue;
 	}
+	static FName NAME_ANewCharacter_GetMaxCustomExtendedAcceleration = FName(TEXT("GetMaxCustomExtendedAcceleration"));
+	float ANewCharacter::GetMaxCustomExtendedAcceleration()
+	{
+		NewCharacter_eventGetMaxCustomExtendedAcceleration_Parms Parms;
+		ProcessEvent(FindFunctionChecked(NAME_ANewCharacter_GetMaxCustomExtendedAcceleration),&Parms);
+		return Parms.ReturnValue;
+	}
+	static FName NAME_ANewCharacter_GetMaxCustomExtendedDeceleration = FName(TEXT("GetMaxCustomExtendedDeceleration"));
+	float ANewCharacter::GetMaxCustomExtendedDeceleration()
+	{
+		NewCharacter_eventGetMaxCustomExtendedDeceleration_Parms Parms;
+		ProcessEvent(FindFunctionChecked(NAME_ANewCharacter_GetMaxCustomExtendedDeceleration),&Parms);
+		return Parms.ReturnValue;
+	}
 	static FName NAME_ANewCharacter_GetMaxCustomExtendedSpeed = FName(TEXT("GetMaxCustomExtendedSpeed"));
 	float ANewCharacter::GetMaxCustomExtendedSpeed()
 	{
@@ -590,6 +650,7 @@ void EmptyLinkFunctionForGeneratedCodeNewCharacter() {}
 	{
 		UClass* Class = ANewCharacter::StaticClass();
 		static const FNameNativePtrPair Funcs[] = {
+			{ "AddAndUpdateCustomAdvancedWarpTargets", &ANewCharacter::execAddAndUpdateCustomAdvancedWarpTargets },
 			{ "CanCustomAdvancedMovement", &ANewCharacter::execCanCustomAdvancedMovement },
 			{ "CanCustomExtendedMovement", &ANewCharacter::execCanCustomExtendedMovement },
 			{ "Climb", &ANewCharacter::execClimb },
@@ -609,6 +670,8 @@ void EmptyLinkFunctionForGeneratedCodeNewCharacter() {}
 			{ "GetCustomAdvancedMovementData", &ANewCharacter::execGetCustomAdvancedMovementData },
 			{ "GetMantleData", &ANewCharacter::execGetMantleData },
 			{ "GetMaxCustomAdvancedSpeed", &ANewCharacter::execGetMaxCustomAdvancedSpeed },
+			{ "GetMaxCustomExtendedAcceleration", &ANewCharacter::execGetMaxCustomExtendedAcceleration },
+			{ "GetMaxCustomExtendedDeceleration", &ANewCharacter::execGetMaxCustomExtendedDeceleration },
 			{ "GetMaxCustomExtendedSpeed", &ANewCharacter::execGetMaxCustomExtendedSpeed },
 			{ "GetMotionWarpingComponent", &ANewCharacter::execGetMotionWarpingComponent },
 			{ "GetNewCharacterMovementComponent", &ANewCharacter::execGetNewCharacterMovementComponent },
@@ -640,6 +703,31 @@ void EmptyLinkFunctionForGeneratedCodeNewCharacter() {}
 			{ "WallRun", &ANewCharacter::execWallRun },
 		};
 		FNativeFunctionRegistrar::RegisterFunctions(Class, Funcs, UE_ARRAY_COUNT(Funcs));
+	}
+	struct Z_Construct_UFunction_ANewCharacter_AddAndUpdateCustomAdvancedWarpTargets_Statics
+	{
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UECodeGen_Private::FFunctionParams FuncParams;
+	};
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_ANewCharacter_AddAndUpdateCustomAdvancedWarpTargets_Statics::Function_MetaDataParams[] = {
+		{ "Category", "Movement|Advanced" },
+		{ "Comment", "/**\n\x09 * Updates and adds custom warp targets for advanced movement during root motion.\n\x09 * This function allows dynamic updates to custom warp targets used during root motion-based movement states.\n\x09 * BlueprintNativeEvent enables the ability to adjust these targets through Blueprints at runtime.\n\x09 *\n\x09 * @note: This function is intended to handle warp target updates for root motion and should be extended\n\x09 *        with specific logic in the Implementation.\n\x09 */" },
+		{ "ModuleRelativePath", "Public/NewCharacter.h" },
+		{ "ToolTip", "Updates and adds custom warp targets for advanced movement during root motion.\nThis function allows dynamic updates to custom warp targets used during root motion-based movement states.\nBlueprintNativeEvent enables the ability to adjust these targets through Blueprints at runtime.\n\n@note: This function is intended to handle warp target updates for root motion and should be extended\n       with specific logic in the Implementation." },
+	};
+#endif
+	const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_ANewCharacter_AddAndUpdateCustomAdvancedWarpTargets_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_ANewCharacter, nullptr, "AddAndUpdateCustomAdvancedWarpTargets", nullptr, nullptr, nullptr, 0, 0, RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x0C020C00, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_ANewCharacter_AddAndUpdateCustomAdvancedWarpTargets_Statics::Function_MetaDataParams), Z_Construct_UFunction_ANewCharacter_AddAndUpdateCustomAdvancedWarpTargets_Statics::Function_MetaDataParams) };
+	UFunction* Z_Construct_UFunction_ANewCharacter_AddAndUpdateCustomAdvancedWarpTargets()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_ANewCharacter_AddAndUpdateCustomAdvancedWarpTargets_Statics::FuncParams);
+		}
+		return ReturnFunction;
 	}
 	struct Z_Construct_UFunction_ANewCharacter_CanCustomAdvancedMovement_Statics
 	{
@@ -1312,6 +1400,68 @@ void EmptyLinkFunctionForGeneratedCodeNewCharacter() {}
 		if (!ReturnFunction)
 		{
 			UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_ANewCharacter_GetMaxCustomAdvancedSpeed_Statics::FuncParams);
+		}
+		return ReturnFunction;
+	}
+	struct Z_Construct_UFunction_ANewCharacter_GetMaxCustomExtendedAcceleration_Statics
+	{
+		static const UECodeGen_Private::FFloatPropertyParams NewProp_ReturnValue;
+		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UECodeGen_Private::FFunctionParams FuncParams;
+	};
+	const UECodeGen_Private::FFloatPropertyParams Z_Construct_UFunction_ANewCharacter_GetMaxCustomExtendedAcceleration_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(NewCharacter_eventGetMaxCustomExtendedAcceleration_Parms, ReturnValue), METADATA_PARAMS(0, nullptr) };
+	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_ANewCharacter_GetMaxCustomExtendedAcceleration_Statics::PropPointers[] = {
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_ANewCharacter_GetMaxCustomExtendedAcceleration_Statics::NewProp_ReturnValue,
+	};
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_ANewCharacter_GetMaxCustomExtendedAcceleration_Statics::Function_MetaDataParams[] = {
+		{ "Category", "Movement|Extended" },
+		{ "ModuleRelativePath", "Public/NewCharacter.h" },
+	};
+#endif
+	const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_ANewCharacter_GetMaxCustomExtendedAcceleration_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_ANewCharacter, nullptr, "GetMaxCustomExtendedAcceleration", nullptr, nullptr, Z_Construct_UFunction_ANewCharacter_GetMaxCustomExtendedAcceleration_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_ANewCharacter_GetMaxCustomExtendedAcceleration_Statics::PropPointers), sizeof(NewCharacter_eventGetMaxCustomExtendedAcceleration_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x1C020C00, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_ANewCharacter_GetMaxCustomExtendedAcceleration_Statics::Function_MetaDataParams), Z_Construct_UFunction_ANewCharacter_GetMaxCustomExtendedAcceleration_Statics::Function_MetaDataParams) };
+	static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_ANewCharacter_GetMaxCustomExtendedAcceleration_Statics::PropPointers) < 2048);
+	static_assert(sizeof(NewCharacter_eventGetMaxCustomExtendedAcceleration_Parms) < MAX_uint16);
+	UFunction* Z_Construct_UFunction_ANewCharacter_GetMaxCustomExtendedAcceleration()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_ANewCharacter_GetMaxCustomExtendedAcceleration_Statics::FuncParams);
+		}
+		return ReturnFunction;
+	}
+	struct Z_Construct_UFunction_ANewCharacter_GetMaxCustomExtendedDeceleration_Statics
+	{
+		static const UECodeGen_Private::FFloatPropertyParams NewProp_ReturnValue;
+		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UECodeGen_Private::FFunctionParams FuncParams;
+	};
+	const UECodeGen_Private::FFloatPropertyParams Z_Construct_UFunction_ANewCharacter_GetMaxCustomExtendedDeceleration_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(NewCharacter_eventGetMaxCustomExtendedDeceleration_Parms, ReturnValue), METADATA_PARAMS(0, nullptr) };
+	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_ANewCharacter_GetMaxCustomExtendedDeceleration_Statics::PropPointers[] = {
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_ANewCharacter_GetMaxCustomExtendedDeceleration_Statics::NewProp_ReturnValue,
+	};
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_ANewCharacter_GetMaxCustomExtendedDeceleration_Statics::Function_MetaDataParams[] = {
+		{ "Category", "Movement|Extended" },
+		{ "ModuleRelativePath", "Public/NewCharacter.h" },
+	};
+#endif
+	const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_ANewCharacter_GetMaxCustomExtendedDeceleration_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_ANewCharacter, nullptr, "GetMaxCustomExtendedDeceleration", nullptr, nullptr, Z_Construct_UFunction_ANewCharacter_GetMaxCustomExtendedDeceleration_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_ANewCharacter_GetMaxCustomExtendedDeceleration_Statics::PropPointers), sizeof(NewCharacter_eventGetMaxCustomExtendedDeceleration_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x1C020C00, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_ANewCharacter_GetMaxCustomExtendedDeceleration_Statics::Function_MetaDataParams), Z_Construct_UFunction_ANewCharacter_GetMaxCustomExtendedDeceleration_Statics::Function_MetaDataParams) };
+	static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_ANewCharacter_GetMaxCustomExtendedDeceleration_Statics::PropPointers) < 2048);
+	static_assert(sizeof(NewCharacter_eventGetMaxCustomExtendedDeceleration_Parms) < MAX_uint16);
+	UFunction* Z_Construct_UFunction_ANewCharacter_GetMaxCustomExtendedDeceleration()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_ANewCharacter_GetMaxCustomExtendedDeceleration_Statics::FuncParams);
 		}
 		return ReturnFunction;
 	}
@@ -2268,6 +2418,7 @@ void EmptyLinkFunctionForGeneratedCodeNewCharacter() {}
 	};
 	static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_ANewCharacter_Statics::DependentSingletons) < 16);
 	const FClassFunctionLinkInfo Z_Construct_UClass_ANewCharacter_Statics::FuncInfo[] = {
+		{ &Z_Construct_UFunction_ANewCharacter_AddAndUpdateCustomAdvancedWarpTargets, "AddAndUpdateCustomAdvancedWarpTargets" }, // 2031167807
 		{ &Z_Construct_UFunction_ANewCharacter_CanCustomAdvancedMovement, "CanCustomAdvancedMovement" }, // 557433494
 		{ &Z_Construct_UFunction_ANewCharacter_CanCustomExtendedMovement, "CanCustomExtendedMovement" }, // 3208073573
 		{ &Z_Construct_UFunction_ANewCharacter_Climb, "Climb" }, // 508110465
@@ -2287,6 +2438,8 @@ void EmptyLinkFunctionForGeneratedCodeNewCharacter() {}
 		{ &Z_Construct_UFunction_ANewCharacter_GetCustomAdvancedMovementData, "GetCustomAdvancedMovementData" }, // 306679411
 		{ &Z_Construct_UFunction_ANewCharacter_GetMantleData, "GetMantleData" }, // 4126256666
 		{ &Z_Construct_UFunction_ANewCharacter_GetMaxCustomAdvancedSpeed, "GetMaxCustomAdvancedSpeed" }, // 4045765666
+		{ &Z_Construct_UFunction_ANewCharacter_GetMaxCustomExtendedAcceleration, "GetMaxCustomExtendedAcceleration" }, // 3565416260
+		{ &Z_Construct_UFunction_ANewCharacter_GetMaxCustomExtendedDeceleration, "GetMaxCustomExtendedDeceleration" }, // 3152497381
 		{ &Z_Construct_UFunction_ANewCharacter_GetMaxCustomExtendedSpeed, "GetMaxCustomExtendedSpeed" }, // 994418473
 		{ &Z_Construct_UFunction_ANewCharacter_GetMotionWarpingComponent, "GetMotionWarpingComponent" }, // 2725150200
 		{ &Z_Construct_UFunction_ANewCharacter_GetNewCharacterMovementComponent, "GetNewCharacterMovementComponent" }, // 3468633205
@@ -2418,9 +2571,9 @@ void EmptyLinkFunctionForGeneratedCodeNewCharacter() {}
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_NewPlugin___5_3_CharacterLocomotionSystem_HostProject_Plugins_CharacterLocomotionSystem_Source_CharacterLocomotionSystem_Public_NewCharacter_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_ANewCharacter, ANewCharacter::StaticClass, TEXT("ANewCharacter"), &Z_Registration_Info_UClass_ANewCharacter, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(ANewCharacter), 2620342208U) },
+		{ Z_Construct_UClass_ANewCharacter, ANewCharacter::StaticClass, TEXT("ANewCharacter"), &Z_Registration_Info_UClass_ANewCharacter, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(ANewCharacter), 1715871407U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_NewPlugin___5_3_CharacterLocomotionSystem_HostProject_Plugins_CharacterLocomotionSystem_Source_CharacterLocomotionSystem_Public_NewCharacter_h_1271594243(TEXT("/Script/CharacterLocomotionSystem"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_NewPlugin___5_3_CharacterLocomotionSystem_HostProject_Plugins_CharacterLocomotionSystem_Source_CharacterLocomotionSystem_Public_NewCharacter_h_1338681130(TEXT("/Script/CharacterLocomotionSystem"),
 		Z_CompiledInDeferFile_FID_NewPlugin___5_3_CharacterLocomotionSystem_HostProject_Plugins_CharacterLocomotionSystem_Source_CharacterLocomotionSystem_Public_NewCharacter_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_NewPlugin___5_3_CharacterLocomotionSystem_HostProject_Plugins_CharacterLocomotionSystem_Source_CharacterLocomotionSystem_Public_NewCharacter_h_Statics::ClassInfo),
 		nullptr, 0,
 		nullptr, 0);

@@ -222,7 +222,14 @@ void ANewCharacter::StopCustomAdvancedMovement_Implementation()
 void ANewCharacter::EnterCustomAdvancedMovement_Implementation()
 {
 	NewCharacterMovementComponent->PreInitializeAdvancedMovement();
+	if (!GetCustomAdvancedMovementData())
+	{
+		StopCustomAdvancedMovement();
+		return;
+	}
+	NewCharacterMovementComponent->BroadcastCustomAdvancedMovementInitialized(GetCustomAdvancedMovementData());
 	NewCharacterMovementComponent->PlayAdvancedMovementMontage();
+	NewCharacterMovementComponent->BroadcastCustomAdvancedMovementStart();
 }
 
 void ANewCharacter::ExitCustomAdvancedMovement_Implementation()
@@ -243,6 +250,10 @@ bool ANewCharacter::CanCustomAdvancedMovement_Implementation()
 float ANewCharacter::GetMaxCustomAdvancedSpeed_Implementation()
 {
 	return 0.0f;
+}
+
+void ANewCharacter::AddAndUpdateCustomAdvancedWarpTargets_Implementation()
+{
 }
 
 #pragma region Vault
@@ -387,7 +398,7 @@ void ANewCharacter::StopFastMovement()
 
 bool ANewCharacter::StartCustomExtendedMovement_Implementation()
 {
-	if (CanCustomAdvancedMovement())
+	if (CanCustomExtendedMovement())
 	{
 		NewCharacterMovementComponent->StartCustomExtended();
 	}
@@ -398,11 +409,15 @@ void ANewCharacter::StopCustomExtendedMovement_Implementation()
 {
 	NewCharacterMovementComponent->StopCustomExtended();
 }
+
 void ANewCharacter::EnterCustomExtendedMovement_Implementation()
 {
+	NewCharacterMovementComponent->SetMovementMode(MOVE_Custom, CMOVE_CustomExtended);
 }
+
 void ANewCharacter::ExitCustomExtendedMovement_Implementation()
 {
+	NewCharacterMovementComponent->SetMovementMode(MOVE_Walking);
 }
 
 void ANewCharacter::CustomExtendedMovementPhysics_Implementation(float deltaTime, int32 Iterations)
@@ -445,6 +460,16 @@ void ANewCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 
 }
 
+
+float ANewCharacter::GetMaxCustomExtendedAcceleration_Implementation()
+{
+	return 0.0f;
+}
+
+float ANewCharacter::GetMaxCustomExtendedDeceleration_Implementation()
+{
+	return 0.0f;
+}
 
 void ANewCharacter::RecalculateBaseEyeHeight()
 {

@@ -34,6 +34,7 @@ class UVaultPrimaryDataAsset;
 	DECLARE_FUNCTION(execStopVaulting); \
 	DECLARE_FUNCTION(execVault); \
 	DECLARE_FUNCTION(execGetVaultData); \
+	DECLARE_FUNCTION(execAddAndUpdateCustomAdvancedWarpTargets); \
 	DECLARE_FUNCTION(execGetMaxCustomAdvancedSpeed); \
 	DECLARE_FUNCTION(execCanCustomAdvancedMovement); \
 	DECLARE_FUNCTION(execCustomAdvancedMovementPhysics); \
@@ -62,6 +63,8 @@ class UVaultPrimaryDataAsset;
 	DECLARE_FUNCTION(execStopFlying); \
 	DECLARE_FUNCTION(execFastFly); \
 	DECLARE_FUNCTION(execFly); \
+	DECLARE_FUNCTION(execGetMaxCustomExtendedDeceleration); \
+	DECLARE_FUNCTION(execGetMaxCustomExtendedAcceleration); \
 	DECLARE_FUNCTION(execGetMaxCustomExtendedSpeed); \
 	DECLARE_FUNCTION(execCanCustomExtendedMovement); \
 	DECLARE_FUNCTION(execCustomExtendedMovementPhysics); \

@@ -162,6 +162,13 @@ public:
 	float GetMaxCustomExtendedSpeed_Implementation();
 
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintPure, Category = "Movement|Extended")
+	float GetMaxCustomExtendedAcceleration();
+	float GetMaxCustomExtendedAcceleration_Implementation();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintPure, Category = "Movement|Extended")
+	float GetMaxCustomExtendedDeceleration();
+	float GetMaxCustomExtendedDeceleration_Implementation();
 
 
 #pragma region Overrided
@@ -483,6 +490,18 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintPure, Category = "Movement|Advanced")
 	float GetMaxCustomAdvancedSpeed();
 	float GetMaxCustomAdvancedSpeed_Implementation();
+
+	/**
+	 * Updates and adds custom warp targets for advanced movement during root motion.
+	 * This function allows dynamic updates to custom warp targets used during root motion-based movement states.
+	 * BlueprintNativeEvent enables the ability to adjust these targets through Blueprints at runtime.
+	 *
+	 * @note: This function is intended to handle warp target updates for root motion and should be extended
+	 *        with specific logic in the Implementation.
+	 */
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Movement|Advanced")
+	void AddAndUpdateCustomAdvancedWarpTargets();
+	void AddAndUpdateCustomAdvancedWarpTargets_Implementation();
 
 
 #pragma region Vault

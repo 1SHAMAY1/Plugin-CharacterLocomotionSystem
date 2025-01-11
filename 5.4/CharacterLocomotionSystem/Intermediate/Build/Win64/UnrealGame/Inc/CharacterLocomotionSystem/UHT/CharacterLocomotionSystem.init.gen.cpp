@@ -15,6 +15,9 @@ void EmptyLinkFunctionForGeneratedCodeCharacterLocomotionSystem_init() {}
 	CHARACTERLOCOMOTIONSYSTEM_API UFunction* Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnClimbUpStop__DelegateSignature();
 	CHARACTERLOCOMOTIONSYSTEM_API UFunction* Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCrouchSprintStart__DelegateSignature();
 	CHARACTERLOCOMOTIONSYSTEM_API UFunction* Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCrouchSprintStop__DelegateSignature();
+	CHARACTERLOCOMOTIONSYSTEM_API UFunction* Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementInitialized__DelegateSignature();
+	CHARACTERLOCOMOTIONSYSTEM_API UFunction* Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementStart__DelegateSignature();
+	CHARACTERLOCOMOTIONSYSTEM_API UFunction* Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementStop__DelegateSignature();
 	CHARACTERLOCOMOTIONSYSTEM_API UFunction* Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnDashStart__DelegateSignature();
 	CHARACTERLOCOMOTIONSYSTEM_API UFunction* Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnDashStop__DelegateSignature();
 	CHARACTERLOCOMOTIONSYSTEM_API UFunction* Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnFastFlyStart__DelegateSignature();
@@ -51,6 +54,9 @@ void EmptyLinkFunctionForGeneratedCodeCharacterLocomotionSystem_init() {}
 				(UObject* (*)())Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnClimbUpStop__DelegateSignature,
 				(UObject* (*)())Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCrouchSprintStart__DelegateSignature,
 				(UObject* (*)())Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCrouchSprintStop__DelegateSignature,
+				(UObject* (*)())Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementInitialized__DelegateSignature,
+				(UObject* (*)())Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementStart__DelegateSignature,
+				(UObject* (*)())Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementStop__DelegateSignature,
 				(UObject* (*)())Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnDashStart__DelegateSignature,
 				(UObject* (*)())Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnDashStop__DelegateSignature,
 				(UObject* (*)())Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnFastFlyStart__DelegateSignature,
@@ -79,13 +85,13 @@ void EmptyLinkFunctionForGeneratedCodeCharacterLocomotionSystem_init() {}
 				SingletonFuncArray,
 				UE_ARRAY_COUNT(SingletonFuncArray),
 				PKG_CompiledIn | 0x00000000,
-				0xF6A7BF7B,
-				0x2876FED8,
+				0x0B23A2FC,
+				0x835E4820,
 				METADATA_PARAMS(0, nullptr)
 			};
 			UECodeGen_Private::ConstructUPackage(Z_Registration_Info_UPackage__Script_CharacterLocomotionSystem.OuterSingleton, PackageParams);
 		}
 		return Z_Registration_Info_UPackage__Script_CharacterLocomotionSystem.OuterSingleton;
 	}
-	static FRegisterCompiledInInfo Z_CompiledInDeferPackage_UPackage__Script_CharacterLocomotionSystem(Z_Construct_UPackage__Script_CharacterLocomotionSystem, TEXT("/Script/CharacterLocomotionSystem"), Z_Registration_Info_UPackage__Script_CharacterLocomotionSystem, CONSTRUCT_RELOAD_VERSION_INFO(FPackageReloadVersionInfo, 0xF6A7BF7B, 0x2876FED8));
+	static FRegisterCompiledInInfo Z_CompiledInDeferPackage_UPackage__Script_CharacterLocomotionSystem(Z_Construct_UPackage__Script_CharacterLocomotionSystem, TEXT("/Script/CharacterLocomotionSystem"), Z_Registration_Info_UPackage__Script_CharacterLocomotionSystem, CONSTRUCT_RELOAD_VERSION_INFO(FPackageReloadVersionInfo, 0x0B23A2FC, 0x835E4820));
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

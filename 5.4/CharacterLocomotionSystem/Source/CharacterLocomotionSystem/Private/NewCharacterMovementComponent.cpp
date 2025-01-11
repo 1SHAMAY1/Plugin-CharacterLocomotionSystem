@@ -34,7 +34,6 @@
 #include "Animation/AnimMontage.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/ActorComponent.h"
-#include "Components/ActorComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "Engine/Engine.h"
@@ -46,6 +45,7 @@
 #include<MantlePrimaryDataAsset.h>
 #include<ClimbUpPrimaryDataAsset.h>
 #include "MotionWarpingComponent.h"
+#include "Components/SceneComponent.h"
 
 UNewCharacterMovementComponent::UNewCharacterMovementComponent(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -225,10 +225,21 @@ bool UNewCharacterMovementComponent::CanCrouchInCurrentState() const
 
 void UNewCharacterMovementComponent::Crouch(bool bClientSimulation)
 {
-	if (IsProning()) StopProne();
-
+	if (IsProning())
+		if (CheckHHUpdateStopProne(true))
+		{
+			HHUpdateStopProne(true);
+			SetMovementMode(MOVE_Walking);
+			bWantsToCrouch = true;
+			CharacterOwner->bIsCrouched = true;
+			StopProne();
+			if (GetWorld()->GetTimerManager().IsTimerActive(UnCrouchTimerHandle))
+				GetWorld()->GetTimerManager().ClearTimer(UnCrouchTimerHandle);
+			return;
+		}
 	Super::Crouch(bClientSimulation);
-
+	if (GetWorld()->GetTimerManager().IsTimerActive(UnCrouchTimerHandle))
+		GetWorld()->GetTimerManager().ClearTimer(UnCrouchTimerHandle);
 }
 
 void UNewCharacterMovementComponent::UnCrouch(bool bClientSimulation)
@@ -503,6 +514,8 @@ void UNewCharacterMovementComponent::EnterProne()
 {
 	if (CheckHHUpdateProne())
 	{
+		if (GetWorld()->GetTimerManager().IsTimerActive(UnCrouchTimerHandle))
+			GetWorld()->GetTimerManager().ClearTimer(UnCrouchTimerHandle);
 		if (bWantsToCrouch)
 			bWantsToCrouch = false;
 		HHUpdateProne();
@@ -518,22 +531,30 @@ void UNewCharacterMovementComponent::EnterProne()
 
 void UNewCharacterMovementComponent::ExitProne()
 {
-	if (CheckHHUpdateStopProne(bWantsToCrouch))
+	if (CheckHHUpdateStopProne(false))
 	{
-		HHUpdateStopProne(bWantsToCrouch);
-		if (CharacterOwner->GetLocalRole() == ROLE_Authority) Multicast_UpdateHHExitProne(bWantsToCrouch);
+		HHUpdateStopProne(false);
+		if (CharacterOwner->GetLocalRole() == ROLE_Authority)
+		{
+			Multicast_UpdateHHExitProne(false);
+		}
 		SetMovementMode(MOVE_Walking);
-		if (CharacterOwner->IsLocallyControlled() && !bWantsToCrouch)
-			CharacterOwner->RecalculateBaseEyeHeight();
-		OnProneStop.Broadcast();
+		return;
 	}
 	else if (CheckHHUpdateStopProne(true))
 	{
-		SetMovementMode(MOVE_Walking);
-		OnProneStop.Broadcast();
 		Crouch();
+		float TwoTicksDelay = 2 * GetWorld()->GetDeltaSeconds();
+		GetWorld()->GetTimerManager().SetTimer(
+			UnCrouchTimerHandle,
+			FTimerDelegate::CreateUObject(this, &UNewCharacterMovementComponent::UnCrouchOwner),
+			TwoTicksDelay,
+			false
+		);
+	return;
 	}
 }
+
 
 
 bool UNewCharacterMovementComponent::CheckHHUpdateProne()
@@ -609,7 +630,6 @@ bool UNewCharacterMovementComponent::CheckHHUpdateStopProne(bool Crouch)
 	);
 
 #if WITH_EDITOR
-
 	if (bShowProneDebugTraces)
 	{
 		// Draw debug capsule at the CheckLocation
@@ -632,6 +652,12 @@ bool UNewCharacterMovementComponent::CheckHHUpdateStopProne(bool Crouch)
 			DrawDebugPoint(GetWorld(), HitResult.Location, -1, FColor::Yellow, false, 1.0f);
 		}
 
+		// Add an on-screen debug message for the sweep result
+		if (GEngine)
+		{
+			FString DebugMessage = FString::Printf(TEXT("Capsule sweep %s at location: %s"), bHit ? TEXT("hit") : TEXT("did not hit"), *CheckLocation.ToString());
+			GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Cyan, DebugMessage);
+		}
 	}
 #endif
 
@@ -2113,7 +2139,7 @@ void UNewCharacterMovementComponent::ProcessClimbableSurfaceInfo()
 
 	// Update the Location and Normal with the averaged values
 	//LastHitResult.Location = CurrentClimbableSurfaceLocation; // Set the new averaged location
-	LastHitResult.Normal = CurrentClimbableSurfaceNormal; // Set the new averaged normal
+	//LastHitResult.Normal = CurrentClimbableSurfaceNormal; // Set the new averaged normal
 
 	// Set the wall info with the modified hit result
 	SetWallInfo(EWallSide::Front, LastHitResult);
@@ -2381,7 +2407,7 @@ void UNewCharacterMovementComponent::UpdateClimbSurface(float deltaTime)
 	const FVector ProjectedComponentToSurface = (CurrentClimbableSurfaceLocation - ComponentLocation).ProjectOnTo(ComponentForward);
 	const FVector UpdatedVector = -CurrentClimbableSurfaceNormal * ProjectedComponentToSurface.Length();
 
-	UpdatedComponent->MoveComponent(UpdatedVector * deltaTime * MaxClimbSpeed, UpdatedComponent->GetComponentQuat(), true);
+	UpdatedComponent->MoveComponent(UpdatedVector * deltaTime * GetMaxSpeed(), UpdatedComponent->GetComponentQuat(), true);
 }
 
 
@@ -2417,7 +2443,7 @@ void UNewCharacterMovementComponent::PhysClimb(float deltaTime, int32 Iterations
 
 	ApplyRootMotionToVelocity(deltaTime);
 
-	/**/Iterations++;
+	Iterations++;
 	bJustTeleported = false;
 
 	FVector OldLocation = UpdatedComponent->GetComponentLocation();
@@ -2485,11 +2511,11 @@ void UNewCharacterMovementComponent::PreInitializeAdvancedMovement()
 	// Check if the owner is valid
 	if (!CharacterOwner)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("PreInitializeVault: CharacterOwner is invalid."));
+		UE_LOG(LogTemp, Warning, TEXT("PreInitializeAdvancedMovement: CharacterOwner is invalid."));
 		return;
 	}
-	// Get the MotionWarpingComponent from the character owner
 
+	// Get the MotionWarpingComponent from the character owner
 	UMotionWarpingComponent* MotionWarpingComp = CharacterOwner->FindComponentByClass<UMotionWarpingComponent>();
 
 	if (!MotionWarpingComp)
@@ -2498,37 +2524,41 @@ void UNewCharacterMovementComponent::PreInitializeAdvancedMovement()
 		return;
 	}
 
-	// Get the vault data from the character owner
-	if (!AdvancedMovementData)	AdvancedMovementData = CharOwner->GetCustomAdvancedMovementData();
+	// Get the advanced movement data from the character owner
+	if (!AdvancedMovementData)
+	{
+		AdvancedMovementData = CharOwner->GetCustomAdvancedMovementData();
+	}
 
 	if (!AdvancedMovementData)
 	{
 		PostInitializeAdvancedMovement();
 		return;
 	}
-	FVector AdjustedWarpLocation;
-	FName WarpTargetName;
-	FRotator TargetRotator = (WarpTargetRotations.Num() > 0) ? WarpTargetRotations[0] : CharacterOwner->GetActorRotation();
 
 	// Check the number of warp targets
 	UE_LOG(LogTemp, Warning, TEXT("Number of Warp Targets: %d"), WarpTargetLocations.Num());
-	if (WarpTargetLocations.Num() < 3)
+	if (WarpTargetLocations.Num() == 0)
 	{
 		PostInitializeAdvancedMovement();
 		return;
 	}
-	// Use a range-based for loop to iterate through WarpTargetLocations
-	int32 Index = 0;
+
 	StopMovementImmediately();
-	for (const FVector& WarpLocation : WarpTargetLocations)
+
+	// Use a range-based for loop to iterate through WarpTargetLocations
+	for (int32 Index = 0; Index < WarpTargetLocations.Num(); ++Index)
 	{
+		FVector AdjustedWarpLocation;
+		FName WarpTargetName;
+		FRotator TargetRotator = (WarpTargetRotations.IsValidIndex(Index)) ? WarpTargetRotations[Index] : CharacterOwner->GetActorRotation();
+
 		// Log the index and warp location (optional, for debugging)
-		UE_LOG(LogTemp, Warning, TEXT("Index: %d, Warp Location: %s"), Index, *WarpLocation.ToString());
-		// Call the function on VaultData with the current warp location or index
-		AdjustedWarpLocation = AdvancedMovementData->AdjustAndUpdateWarpTarget(Index, WarpLocation, CharacterOwner, WarpTargetName);
+		UE_LOG(LogTemp, Warning, TEXT("Index: %d, Warp Location: %s"), Index, *WarpTargetLocations[Index].ToString());
+
+		// Call the function on AdvancedMovementData with the current warp location or index
+		AdjustedWarpLocation = AdvancedMovementData->AdjustAndUpdateWarpTarget(Index, WarpTargetLocations[Index], CharacterOwner, WarpTargetName);
 		MotionWarpingComp->AddOrUpdateWarpTargetFromLocationAndRotation(WarpTargetName, AdjustedWarpLocation, TargetRotator);
-		// Increment the index manually
-		Index++;
 	}
 }
 
@@ -2542,9 +2572,11 @@ void UNewCharacterMovementComponent::PostInitializeAdvancedMovement()
 	AdvancedMovementData = nullptr;
 	WarpTargetLocations.Empty();
 	WarpTargetRotations.Empty();
+	if (IsAdvancedFlagActive(uint8(EAdvancedMovementFlag::CFLAG_WantsToCustomAdvancedMovement)))
+		StopCustomAdvancedMovement();
 	SetMovementMode(MOVE_Walking);
 	SetWallInfo(EWallSide::None, FHitResult());
-	OnVaultStop.Broadcast();
+	OnCustomAdvancedMovementStop.Broadcast();
 }
 
 void UNewCharacterMovementComponent::PlayAdvancedMovementMontage()
@@ -2577,7 +2609,7 @@ void UNewCharacterMovementComponent::PlayAdvancedMovementMontage()
 			OwnerAnimInstance->Montage_SetBlendingOutDelegate(MontageBlendingOutDelegate, MovementMontage);
 
 			// Optionally, bind an OnCompleted delegate if you need to handle the montage’s natural end
-			OwnerAnimInstance->Montage_SetEndDelegate(MontageBlendingOutDelegate, MovementMontage);
+			//OwnerAnimInstance->Montage_SetEndDelegate(MontageBlendingOutDelegate, MovementMontage);
 		}
 	}
 }
@@ -2591,6 +2623,16 @@ void UNewCharacterMovementComponent::OnAdvancedMovementEnded(UAnimMontage* Monta
 bool UNewCharacterMovementComponent::IsInCustomAdvancedMovement() const
 {
 	return IsCustomMovementMode(CMOVE_CustomAdvancedMovement);
+}
+
+void UNewCharacterMovementComponent::BroadcastCustomAdvancedMovementStart()
+{
+	OnCustomAdvancedMovementStart.Broadcast(CurrentWall);
+}
+
+void UNewCharacterMovementComponent::BroadcastCustomAdvancedMovementInitialized(UAdvancedMovementPrimaryDataAsset* CustomAdvancedData)
+{
+	OnCustomAdvancedMovementInitialized.Broadcast(CustomAdvancedData);
 }
 
 #pragma region Vault
@@ -2961,7 +3003,12 @@ void UNewCharacterMovementComponent::EnterVault()
 	if (UpdateVaultWarpLocations())
 	{
 		PreInitializeVault();
-		if (VaultData) OnVaultInitialize.Broadcast(VaultData);
+		if (!VaultData)
+		{
+			StopVault();
+			return;
+		}
+		OnVaultInitialize.Broadcast(VaultData);
 		PlayVaultMontage();
 		HHUpdateVault();
 		if (CharacterOwner->GetLocalRole() == ROLE_Authority)
@@ -3859,7 +3906,12 @@ void UNewCharacterMovementComponent::EnterMantle()
 		if (UpdateMantleWarpLocations())
 		{
 			PreInitializeMantle();
-			if (MantleData) OnMantleInitialize.Broadcast(MantleData);
+			if (!MantleData)
+			{
+				StopMantle();
+				return;
+			}
+			OnMantleInitialize.Broadcast(MantleData);
 			PlayMantleMontage();
 			SetMovementMode(MOVE_Custom, CMOVE_Mantle);
 			if (CharacterOwner->GetLocalRole() == ROLE_Authority)
@@ -3871,7 +3923,9 @@ void UNewCharacterMovementComponent::EnterMantle()
 	else if (CheckLedgeDuringFall())
 	{
 		PreInitializeMantle();
-		if (MantleData) OnMantleInitialize.Broadcast(MantleData);
+		if (!MantleData)
+			StopMantle();
+		OnMantleInitialize.Broadcast(MantleData);
 		PlayMantleMontage();
 		SetMovementMode(MOVE_Custom, CMOVE_Mantle);
 		Server_PlayMantle(MantleData->AdvancedMovementMontage, MantleData->MontagePlayRate, MantleData->MontageStartDuration);
@@ -4569,7 +4623,12 @@ void UNewCharacterMovementComponent::EnterClimbUp()
 	if (UpdateClimbUpWarpLocations())
 	{
 		PreInitializeClimbUp();
-		if (ClimbUpData)OnClimbUpInitialize.Broadcast(ClimbUpData);
+		if (!ClimbUpData)
+		{
+			StopClimbUp();
+			return;
+		}
+		OnClimbUpInitialize.Broadcast(ClimbUpData);
 		PlayClimbUpMontage();
 		SetMovementMode(MOVE_Custom, CMOVE_ClimbUp);
 		if (CharacterOwner->GetLocalRole() == ROLE_Authority)
@@ -5557,6 +5616,11 @@ void UNewCharacterMovementComponent::SetWallInfo(EWallSide NewWallSide, const FH
 	CurrentWall.WallHit = NewWallHit;
 }
 
+void UNewCharacterMovementComponent::BP_SafeMoveUpdatedComponent(const FVector& Delta, const FQuat& NewRotation, bool bSweep, FHitResult& OutHit, ETeleportType Teleport)
+{
+	SafeMoveUpdatedComponent(Delta, NewRotation, bSweep, OutHit, Teleport);
+}
+
 float UNewCharacterMovementComponent::GetCurrentFloorAngle() const
 {
 	// Calculate the angle in degrees between the floor normal and the up vector
@@ -5567,6 +5631,47 @@ float UNewCharacterMovementComponent::GetCurrentFloorAngle() const
 		)));
 	else
 		return 0.0f;
+}
+
+float UNewCharacterMovementComponent::GetMinTickTime() const
+{
+	return MIN_TICK_TIME;
+}
+
+void UNewCharacterMovementComponent::BP_RestorePreAdditiveRootMotionVelocity()
+{
+	RestorePreAdditiveRootMotionVelocity();
+}
+
+bool UNewCharacterMovementComponent::BP_HasOverrideVelocity() const
+{
+	return CurrentRootMotion.HasOverrideVelocity();
+}
+
+bool UNewCharacterMovementComponent::BP_HasAnimRootMotion()
+{
+	return HasAnimRootMotion();
+}
+
+void UNewCharacterMovementComponent::BP_ApplyRootMotionToVelocity(float DeltaTime)
+{
+	ApplyRootMotionToVelocity(DeltaTime);
+}
+
+void UNewCharacterMovementComponent::BP_HandleImpact(const FHitResult& Impact, float TimeSlice, const FVector& MoveDelta)
+{
+	HandleImpact(Impact, TimeSlice, MoveDelta);
+}
+
+void UNewCharacterMovementComponent::BP_SlideAlongSurface(const FVector& Delta, float Time, const FVector& InNormal, FHitResult& Hit, bool bHandleImpact)
+{
+	SlideAlongSurface(Delta, Time, InNormal, Hit, bHandleImpact);
+}
+
+bool UNewCharacterMovementComponent::BP_MoveComponent(USceneComponent* Component, const FVector& Delta, const FQuat& NewRotation, bool bSweep, UPARAM(ref) FHitResult& OutHit, EMoveComponentBPFlags MoveFlags, ETeleportType Teleport)
+{
+	if (!Component) return false;
+	return Component->MoveComponent(Delta, NewRotation, bSweep, &OutHit, static_cast<EMoveComponentFlags>(MoveFlags), Teleport);
 }
 
 bool UNewCharacterMovementComponent::HandlePendingLaunch()
@@ -6219,7 +6324,7 @@ float UNewCharacterMovementComponent::GetMaxAcceleration() const
 	case CMOVE_Dash:
 		return 1000.0f;
 	case CMOVE_CustomExtended:
-		return 0.0f;
+		return CharOwner->GetMaxCustomExtendedAcceleration();
 	case CMOVE_CustomAdvancedMovement:
 		return 0.0f;
 	case CMOVE_Vault:
@@ -6251,7 +6356,7 @@ float UNewCharacterMovementComponent::GetMaxBrakingDeceleration() const
 	case CMOVE_Dash:
 		return 1000.0f;
 	case CMOVE_CustomExtended:
-		return 0.0f;
+		return CharOwner->GetMaxCustomExtendedDeceleration();
 	case CMOVE_CustomAdvancedMovement:
 		return 10000.0f;
 	case CMOVE_Vault:
@@ -6264,6 +6369,11 @@ float UNewCharacterMovementComponent::GetMaxBrakingDeceleration() const
 		UE_LOG(LogTemp, Fatal, TEXT("Invalid Movement Mode"))
 			return -1.f;
 	}
+}
+
+void UNewCharacterMovementComponent::UnCrouchOwner()
+{
+	CharacterOwner->UnCrouch();
 }
 
 FVector UNewCharacterMovementComponent::ConstrainAnimRootMotionVelocity(const FVector& RootMotionVelocity, const FVector& CurrentVelocity) const

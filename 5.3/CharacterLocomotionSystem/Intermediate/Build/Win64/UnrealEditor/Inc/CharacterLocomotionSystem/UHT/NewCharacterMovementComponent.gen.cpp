@@ -18,6 +18,7 @@ void EmptyLinkFunctionForGeneratedCodeNewCharacterMovementComponent() {}
 	CHARACTERLOCOMOTIONSYSTEM_API UClass* Z_Construct_UClass_UNewCharacterMovementComponent_NoRegister();
 	CHARACTERLOCOMOTIONSYSTEM_API UClass* Z_Construct_UClass_UVaultPrimaryDataAsset_NoRegister();
 	CHARACTERLOCOMOTIONSYSTEM_API UEnum* Z_Construct_UEnum_CharacterLocomotionSystem_ECustomMovementMode();
+	CHARACTERLOCOMOTIONSYSTEM_API UEnum* Z_Construct_UEnum_CharacterLocomotionSystem_EMoveComponentBPFlags();
 	CHARACTERLOCOMOTIONSYSTEM_API UEnum* Z_Construct_UEnum_CharacterLocomotionSystem_ESlideExitMovementMode();
 	CHARACTERLOCOMOTIONSYSTEM_API UEnum* Z_Construct_UEnum_CharacterLocomotionSystem_EWallSide();
 	CHARACTERLOCOMOTIONSYSTEM_API UFunction* Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnClimbReachedUpLedge__DelegateSignature();
@@ -28,6 +29,9 @@ void EmptyLinkFunctionForGeneratedCodeNewCharacterMovementComponent() {}
 	CHARACTERLOCOMOTIONSYSTEM_API UFunction* Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnClimbUpStop__DelegateSignature();
 	CHARACTERLOCOMOTIONSYSTEM_API UFunction* Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCrouchSprintStart__DelegateSignature();
 	CHARACTERLOCOMOTIONSYSTEM_API UFunction* Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCrouchSprintStop__DelegateSignature();
+	CHARACTERLOCOMOTIONSYSTEM_API UFunction* Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementInitialized__DelegateSignature();
+	CHARACTERLOCOMOTIONSYSTEM_API UFunction* Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementStart__DelegateSignature();
+	CHARACTERLOCOMOTIONSYSTEM_API UFunction* Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementStop__DelegateSignature();
 	CHARACTERLOCOMOTIONSYSTEM_API UFunction* Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnDashStart__DelegateSignature();
 	CHARACTERLOCOMOTIONSYSTEM_API UFunction* Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnDashStop__DelegateSignature();
 	CHARACTERLOCOMOTIONSYSTEM_API UFunction* Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnFastFlyStart__DelegateSignature();
@@ -51,16 +55,90 @@ void EmptyLinkFunctionForGeneratedCodeNewCharacterMovementComponent() {}
 	CHARACTERLOCOMOTIONSYSTEM_API UFunction* Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnWallRunStart__DelegateSignature();
 	CHARACTERLOCOMOTIONSYSTEM_API UFunction* Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnWallRunStop__DelegateSignature();
 	CHARACTERLOCOMOTIONSYSTEM_API UScriptStruct* Z_Construct_UScriptStruct_FCurrentWallInfo();
+	COREUOBJECT_API UScriptStruct* Z_Construct_UScriptStruct_FQuat();
 	COREUOBJECT_API UScriptStruct* Z_Construct_UScriptStruct_FRotator();
 	COREUOBJECT_API UScriptStruct* Z_Construct_UScriptStruct_FVector();
 	ENGINE_API UClass* Z_Construct_UClass_UAnimMontage_NoRegister();
 	ENGINE_API UClass* Z_Construct_UClass_UCharacterMovementComponent();
+	ENGINE_API UClass* Z_Construct_UClass_USceneComponent_NoRegister();
 	ENGINE_API UEnum* Z_Construct_UEnum_Engine_EMovementMode();
 	ENGINE_API UEnum* Z_Construct_UEnum_Engine_EObjectTypeQuery();
+	ENGINE_API UEnum* Z_Construct_UEnum_Engine_ETeleportType();
 	ENGINE_API UScriptStruct* Z_Construct_UScriptStruct_FHitResult();
 	ENGINE_API UScriptStruct* Z_Construct_UScriptStruct_FTimerHandle();
 	UPackage* Z_Construct_UPackage__Script_CharacterLocomotionSystem();
 // End Cross Module References
+	static FEnumRegistrationInfo Z_Registration_Info_UEnum_EMoveComponentBPFlags;
+	static UEnum* EMoveComponentBPFlags_StaticEnum()
+	{
+		if (!Z_Registration_Info_UEnum_EMoveComponentBPFlags.OuterSingleton)
+		{
+			Z_Registration_Info_UEnum_EMoveComponentBPFlags.OuterSingleton = GetStaticEnum(Z_Construct_UEnum_CharacterLocomotionSystem_EMoveComponentBPFlags, (UObject*)Z_Construct_UPackage__Script_CharacterLocomotionSystem(), TEXT("EMoveComponentBPFlags"));
+		}
+		return Z_Registration_Info_UEnum_EMoveComponentBPFlags.OuterSingleton;
+	}
+	template<> CHARACTERLOCOMOTIONSYSTEM_API UEnum* StaticEnum<EMoveComponentBPFlags>()
+	{
+		return EMoveComponentBPFlags_StaticEnum();
+	}
+	struct Z_Construct_UEnum_CharacterLocomotionSystem_EMoveComponentBPFlags_Statics
+	{
+		static const UECodeGen_Private::FEnumeratorParam Enumerators[];
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam Enum_MetaDataParams[];
+#endif
+		static const UECodeGen_Private::FEnumParams EnumParams;
+	};
+	const UECodeGen_Private::FEnumeratorParam Z_Construct_UEnum_CharacterLocomotionSystem_EMoveComponentBPFlags_Statics::Enumerators[] = {
+		{ "BPMOVECOMP_NoFlags", (int64)BPMOVECOMP_NoFlags },
+		{ "BPMOVECOMP_IgnoreBases", (int64)BPMOVECOMP_IgnoreBases },
+		{ "BPMOVECOMP_SkipPhysicsMove", (int64)BPMOVECOMP_SkipPhysicsMove },
+		{ "BPMOVECOMP_NeverIgnoreBlockingOverlaps", (int64)BPMOVECOMP_NeverIgnoreBlockingOverlaps },
+		{ "BpMOVECOMP_DisableBlockingOverlapDispatch", (int64)BpMOVECOMP_DisableBlockingOverlapDispatch },
+	};
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UEnum_CharacterLocomotionSystem_EMoveComponentBPFlags_Statics::Enum_MetaDataParams[] = {
+		{ "BlueprintType", "true" },
+		{ "BpMOVECOMP_DisableBlockingOverlapDispatch.Comment", "/** avoid dispatching blocking hit events when the hit started in penetration (and is not ignored, see MOVECOMP_NeverIgnoreBlockingOverlaps). */" },
+		{ "BpMOVECOMP_DisableBlockingOverlapDispatch.Name", "BpMOVECOMP_DisableBlockingOverlapDispatch" },
+		{ "BpMOVECOMP_DisableBlockingOverlapDispatch.ToolTip", "avoid dispatching blocking hit events when the hit started in penetration (and is not ignored, see MOVECOMP_NeverIgnoreBlockingOverlaps)." },
+		{ "BPMOVECOMP_IgnoreBases.Comment", "/** Ignore collisions with things the Actor is based on */" },
+		{ "BPMOVECOMP_IgnoreBases.Name", "BPMOVECOMP_IgnoreBases" },
+		{ "BPMOVECOMP_IgnoreBases.ToolTip", "Ignore collisions with things the Actor is based on" },
+		{ "BPMOVECOMP_NeverIgnoreBlockingOverlaps.Comment", "/** Never ignore initial blocking overlaps during movement, which are usually ignored when moving out of an object. MOVECOMP_IgnoreBases is still respected. */" },
+		{ "BPMOVECOMP_NeverIgnoreBlockingOverlaps.Name", "BPMOVECOMP_NeverIgnoreBlockingOverlaps" },
+		{ "BPMOVECOMP_NeverIgnoreBlockingOverlaps.ToolTip", "Never ignore initial blocking overlaps during movement, which are usually ignored when moving out of an object. MOVECOMP_IgnoreBases is still respected." },
+		{ "BPMOVECOMP_NoFlags.Comment", "/** Default options */" },
+		{ "BPMOVECOMP_NoFlags.Name", "BPMOVECOMP_NoFlags" },
+		{ "BPMOVECOMP_NoFlags.ToolTip", "Default options" },
+		{ "BPMOVECOMP_SkipPhysicsMove.Comment", "/** When moving this component, do not move the physics representation. Used internally to avoid looping updates when syncing with physics. */" },
+		{ "BPMOVECOMP_SkipPhysicsMove.Name", "BPMOVECOMP_SkipPhysicsMove" },
+		{ "BPMOVECOMP_SkipPhysicsMove.ToolTip", "When moving this component, do not move the physics representation. Used internally to avoid looping updates when syncing with physics." },
+		{ "Comment", "/** MoveComponent options, stored as bitflags */" },
+		{ "ModuleRelativePath", "Public/NewCharacterMovementComponent.h" },
+		{ "ToolTip", "MoveComponent options, stored as bitflags" },
+	};
+#endif
+	const UECodeGen_Private::FEnumParams Z_Construct_UEnum_CharacterLocomotionSystem_EMoveComponentBPFlags_Statics::EnumParams = {
+		(UObject*(*)())Z_Construct_UPackage__Script_CharacterLocomotionSystem,
+		nullptr,
+		"EMoveComponentBPFlags",
+		"EMoveComponentBPFlags",
+		Z_Construct_UEnum_CharacterLocomotionSystem_EMoveComponentBPFlags_Statics::Enumerators,
+		RF_Public|RF_Transient|RF_MarkAsNative,
+		UE_ARRAY_COUNT(Z_Construct_UEnum_CharacterLocomotionSystem_EMoveComponentBPFlags_Statics::Enumerators),
+		EEnumFlags::None,
+		(uint8)UEnum::ECppForm::Regular,
+		METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UEnum_CharacterLocomotionSystem_EMoveComponentBPFlags_Statics::Enum_MetaDataParams), Z_Construct_UEnum_CharacterLocomotionSystem_EMoveComponentBPFlags_Statics::Enum_MetaDataParams)
+	};
+	UEnum* Z_Construct_UEnum_CharacterLocomotionSystem_EMoveComponentBPFlags()
+	{
+		if (!Z_Registration_Info_UEnum_EMoveComponentBPFlags.InnerSingleton)
+		{
+			UECodeGen_Private::ConstructUEnum(Z_Registration_Info_UEnum_EMoveComponentBPFlags.InnerSingleton, Z_Construct_UEnum_CharacterLocomotionSystem_EMoveComponentBPFlags_Statics::EnumParams);
+		}
+		return Z_Registration_Info_UEnum_EMoveComponentBPFlags.InnerSingleton;
+	}
 	static FEnumRegistrationInfo Z_Registration_Info_UEnum_ECustomMovementMode;
 	static UEnum* ECustomMovementMode_StaticEnum()
 	{
@@ -844,6 +922,126 @@ void FOnClimbReachedUpLedge_DelegateWrapper(const FMulticastScriptDelegate& OnCl
 	Parms.CurrentWall=CurrentWall;
 	OnClimbReachedUpLedge.ProcessMulticastDelegate<UObject>(&Parms);
 }
+	struct Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementStart__DelegateSignature_Statics
+	{
+		struct _Script_CharacterLocomotionSystem_eventOnCustomAdvancedMovementStart_Parms
+		{
+			FCurrentWallInfo CurrentWall;
+		};
+		static const UECodeGen_Private::FStructPropertyParams NewProp_CurrentWall;
+		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UECodeGen_Private::FFunctionParams FuncParams;
+	};
+	const UECodeGen_Private::FStructPropertyParams Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementStart__DelegateSignature_Statics::NewProp_CurrentWall = { "CurrentWall", nullptr, (EPropertyFlags)0x0010008000000080, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(_Script_CharacterLocomotionSystem_eventOnCustomAdvancedMovementStart_Parms, CurrentWall), Z_Construct_UScriptStruct_FCurrentWallInfo, METADATA_PARAMS(0, nullptr) }; // 4176621624
+	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementStart__DelegateSignature_Statics::PropPointers[] = {
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementStart__DelegateSignature_Statics::NewProp_CurrentWall,
+	};
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementStart__DelegateSignature_Statics::Function_MetaDataParams[] = {
+		{ "Comment", "/**\n * Triggered when the character starts vaulting.\n * Provides information about the current wall being vaulted over.\n */" },
+		{ "ModuleRelativePath", "Public/NewCharacterMovementComponent.h" },
+		{ "ToolTip", "Triggered when the character starts vaulting.\nProvides information about the current wall being vaulted over." },
+	};
+#endif
+	const UECodeGen_Private::FFunctionParams Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementStart__DelegateSignature_Statics::FuncParams = { (UObject*(*)())Z_Construct_UPackage__Script_CharacterLocomotionSystem, nullptr, "OnCustomAdvancedMovementStart__DelegateSignature", nullptr, nullptr, Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementStart__DelegateSignature_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementStart__DelegateSignature_Statics::PropPointers), sizeof(Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementStart__DelegateSignature_Statics::_Script_CharacterLocomotionSystem_eventOnCustomAdvancedMovementStart_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x00130000, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementStart__DelegateSignature_Statics::Function_MetaDataParams), Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementStart__DelegateSignature_Statics::Function_MetaDataParams) };
+	static_assert(UE_ARRAY_COUNT(Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementStart__DelegateSignature_Statics::PropPointers) < 2048);
+	static_assert(sizeof(Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementStart__DelegateSignature_Statics::_Script_CharacterLocomotionSystem_eventOnCustomAdvancedMovementStart_Parms) < MAX_uint16);
+	UFunction* Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementStart__DelegateSignature()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementStart__DelegateSignature_Statics::FuncParams);
+		}
+		return ReturnFunction;
+	}
+void FOnCustomAdvancedMovementStart_DelegateWrapper(const FMulticastScriptDelegate& OnCustomAdvancedMovementStart, FCurrentWallInfo CurrentWall)
+{
+	struct _Script_CharacterLocomotionSystem_eventOnCustomAdvancedMovementStart_Parms
+	{
+		FCurrentWallInfo CurrentWall;
+	};
+	_Script_CharacterLocomotionSystem_eventOnCustomAdvancedMovementStart_Parms Parms;
+	Parms.CurrentWall=CurrentWall;
+	OnCustomAdvancedMovementStart.ProcessMulticastDelegate<UObject>(&Parms);
+}
+	struct Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementStop__DelegateSignature_Statics
+	{
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UECodeGen_Private::FFunctionParams FuncParams;
+	};
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementStop__DelegateSignature_Statics::Function_MetaDataParams[] = {
+		{ "Comment", "/** Triggered when the character stops vaulting. */" },
+		{ "ModuleRelativePath", "Public/NewCharacterMovementComponent.h" },
+		{ "ToolTip", "Triggered when the character stops vaulting." },
+	};
+#endif
+	const UECodeGen_Private::FFunctionParams Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementStop__DelegateSignature_Statics::FuncParams = { (UObject*(*)())Z_Construct_UPackage__Script_CharacterLocomotionSystem, nullptr, "OnCustomAdvancedMovementStop__DelegateSignature", nullptr, nullptr, nullptr, 0, 0, RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x00130000, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementStop__DelegateSignature_Statics::Function_MetaDataParams), Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementStop__DelegateSignature_Statics::Function_MetaDataParams) };
+	UFunction* Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementStop__DelegateSignature()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementStop__DelegateSignature_Statics::FuncParams);
+		}
+		return ReturnFunction;
+	}
+void FOnCustomAdvancedMovementStop_DelegateWrapper(const FMulticastScriptDelegate& OnCustomAdvancedMovementStop)
+{
+	OnCustomAdvancedMovementStop.ProcessMulticastDelegate<UObject>(NULL);
+}
+	struct Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementInitialized__DelegateSignature_Statics
+	{
+		struct _Script_CharacterLocomotionSystem_eventOnCustomAdvancedMovementInitialized_Parms
+		{
+			UAdvancedMovementPrimaryDataAsset* CustommovementData;
+		};
+		static const UECodeGen_Private::FObjectPropertyParams NewProp_CustommovementData;
+		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UECodeGen_Private::FFunctionParams FuncParams;
+	};
+	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementInitialized__DelegateSignature_Statics::NewProp_CustommovementData = { "CustommovementData", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(_Script_CharacterLocomotionSystem_eventOnCustomAdvancedMovementInitialized_Parms, CustommovementData), Z_Construct_UClass_UAdvancedMovementPrimaryDataAsset_NoRegister, METADATA_PARAMS(0, nullptr) };
+	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementInitialized__DelegateSignature_Statics::PropPointers[] = {
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementInitialized__DelegateSignature_Statics::NewProp_CustommovementData,
+	};
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementInitialized__DelegateSignature_Statics::Function_MetaDataParams[] = {
+		{ "Comment", "/**\n * Triggered to initialize vaulting with specified vault data.\n */" },
+		{ "ModuleRelativePath", "Public/NewCharacterMovementComponent.h" },
+		{ "ToolTip", "Triggered to initialize vaulting with specified vault data." },
+	};
+#endif
+	const UECodeGen_Private::FFunctionParams Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementInitialized__DelegateSignature_Statics::FuncParams = { (UObject*(*)())Z_Construct_UPackage__Script_CharacterLocomotionSystem, nullptr, "OnCustomAdvancedMovementInitialized__DelegateSignature", nullptr, nullptr, Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementInitialized__DelegateSignature_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementInitialized__DelegateSignature_Statics::PropPointers), sizeof(Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementInitialized__DelegateSignature_Statics::_Script_CharacterLocomotionSystem_eventOnCustomAdvancedMovementInitialized_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x00130000, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementInitialized__DelegateSignature_Statics::Function_MetaDataParams), Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementInitialized__DelegateSignature_Statics::Function_MetaDataParams) };
+	static_assert(UE_ARRAY_COUNT(Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementInitialized__DelegateSignature_Statics::PropPointers) < 2048);
+	static_assert(sizeof(Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementInitialized__DelegateSignature_Statics::_Script_CharacterLocomotionSystem_eventOnCustomAdvancedMovementInitialized_Parms) < MAX_uint16);
+	UFunction* Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementInitialized__DelegateSignature()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementInitialized__DelegateSignature_Statics::FuncParams);
+		}
+		return ReturnFunction;
+	}
+void FOnCustomAdvancedMovementInitialized_DelegateWrapper(const FMulticastScriptDelegate& OnCustomAdvancedMovementInitialized, UAdvancedMovementPrimaryDataAsset* CustommovementData)
+{
+	struct _Script_CharacterLocomotionSystem_eventOnCustomAdvancedMovementInitialized_Parms
+	{
+		UAdvancedMovementPrimaryDataAsset* CustommovementData;
+	};
+	_Script_CharacterLocomotionSystem_eventOnCustomAdvancedMovementInitialized_Parms Parms;
+	Parms.CustommovementData=CustommovementData;
+	OnCustomAdvancedMovementInitialized.ProcessMulticastDelegate<UObject>(&Parms);
+}
 	struct Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnVaultStart__DelegateSignature_Statics
 	{
 		struct _Script_CharacterLocomotionSystem_eventOnVaultStart_Parms
@@ -1602,6 +1800,13 @@ void FOnFastSwimStop_DelegateWrapper(const FMulticastScriptDelegate& OnFastSwimS
 		P_THIS->StartVault();
 		P_NATIVE_END;
 	}
+	DEFINE_FUNCTION(UNewCharacterMovementComponent::execIsInCustomAdvancedMovement)
+	{
+		P_FINISH;
+		P_NATIVE_BEGIN;
+		*(bool*)Z_Param__Result=P_THIS->IsInCustomAdvancedMovement();
+		P_NATIVE_END;
+	}
 	DEFINE_FUNCTION(UNewCharacterMovementComponent::execPreInitializeAdvancedMovement)
 	{
 		P_FINISH;
@@ -2000,11 +2205,95 @@ void FOnFastSwimStop_DelegateWrapper(const FMulticastScriptDelegate& OnFastSwimS
 		P_THIS->StartFastMovement();
 		P_NATIVE_END;
 	}
+	DEFINE_FUNCTION(UNewCharacterMovementComponent::execBP_MoveComponent)
+	{
+		P_GET_OBJECT(USceneComponent,Z_Param_Component);
+		P_GET_STRUCT_REF(FVector,Z_Param_Out_Delta);
+		P_GET_STRUCT_REF(FQuat,Z_Param_Out_NewRotation);
+		P_GET_UBOOL(Z_Param_bSweep);
+		P_GET_STRUCT_REF(FHitResult,Z_Param_Out_OutHit);
+		P_GET_PROPERTY(FByteProperty,Z_Param_MoveFlags);
+		P_GET_ENUM(ETeleportType,Z_Param_Teleport);
+		P_FINISH;
+		P_NATIVE_BEGIN;
+		*(bool*)Z_Param__Result=UNewCharacterMovementComponent::BP_MoveComponent(Z_Param_Component,Z_Param_Out_Delta,Z_Param_Out_NewRotation,Z_Param_bSweep,Z_Param_Out_OutHit,EMoveComponentBPFlags(Z_Param_MoveFlags),ETeleportType(Z_Param_Teleport));
+		P_NATIVE_END;
+	}
+	DEFINE_FUNCTION(UNewCharacterMovementComponent::execBP_SlideAlongSurface)
+	{
+		P_GET_STRUCT_REF(FVector,Z_Param_Out_Delta);
+		P_GET_PROPERTY(FFloatProperty,Z_Param_Time);
+		P_GET_STRUCT_REF(FVector,Z_Param_Out_InNormal);
+		P_GET_STRUCT_REF(FHitResult,Z_Param_Out_Hit);
+		P_GET_UBOOL(Z_Param_bHandleImpact);
+		P_FINISH;
+		P_NATIVE_BEGIN;
+		P_THIS->BP_SlideAlongSurface(Z_Param_Out_Delta,Z_Param_Time,Z_Param_Out_InNormal,Z_Param_Out_Hit,Z_Param_bHandleImpact);
+		P_NATIVE_END;
+	}
+	DEFINE_FUNCTION(UNewCharacterMovementComponent::execBP_HandleImpact)
+	{
+		P_GET_STRUCT_REF(FHitResult,Z_Param_Out_Impact);
+		P_GET_PROPERTY(FFloatProperty,Z_Param_TimeSlice);
+		P_GET_STRUCT_REF(FVector,Z_Param_Out_MoveDelta);
+		P_FINISH;
+		P_NATIVE_BEGIN;
+		P_THIS->BP_HandleImpact(Z_Param_Out_Impact,Z_Param_TimeSlice,Z_Param_Out_MoveDelta);
+		P_NATIVE_END;
+	}
+	DEFINE_FUNCTION(UNewCharacterMovementComponent::execBP_ApplyRootMotionToVelocity)
+	{
+		P_GET_PROPERTY(FFloatProperty,Z_Param_DeltaTime);
+		P_FINISH;
+		P_NATIVE_BEGIN;
+		P_THIS->BP_ApplyRootMotionToVelocity(Z_Param_DeltaTime);
+		P_NATIVE_END;
+	}
+	DEFINE_FUNCTION(UNewCharacterMovementComponent::execBP_HasAnimRootMotion)
+	{
+		P_FINISH;
+		P_NATIVE_BEGIN;
+		*(bool*)Z_Param__Result=P_THIS->BP_HasAnimRootMotion();
+		P_NATIVE_END;
+	}
+	DEFINE_FUNCTION(UNewCharacterMovementComponent::execBP_HasOverrideVelocity)
+	{
+		P_FINISH;
+		P_NATIVE_BEGIN;
+		*(bool*)Z_Param__Result=P_THIS->BP_HasOverrideVelocity();
+		P_NATIVE_END;
+	}
+	DEFINE_FUNCTION(UNewCharacterMovementComponent::execBP_RestorePreAdditiveRootMotionVelocity)
+	{
+		P_FINISH;
+		P_NATIVE_BEGIN;
+		P_THIS->BP_RestorePreAdditiveRootMotionVelocity();
+		P_NATIVE_END;
+	}
+	DEFINE_FUNCTION(UNewCharacterMovementComponent::execGetMinTickTime)
+	{
+		P_FINISH;
+		P_NATIVE_BEGIN;
+		*(float*)Z_Param__Result=P_THIS->GetMinTickTime();
+		P_NATIVE_END;
+	}
 	DEFINE_FUNCTION(UNewCharacterMovementComponent::execGetCurrentFloorAngle)
 	{
 		P_FINISH;
 		P_NATIVE_BEGIN;
 		*(float*)Z_Param__Result=P_THIS->GetCurrentFloorAngle();
+		P_NATIVE_END;
+	}
+	DEFINE_FUNCTION(UNewCharacterMovementComponent::execBP_SafeMoveUpdatedComponent)
+	{
+		P_GET_STRUCT_REF(FVector,Z_Param_Out_Delta);
+		P_GET_STRUCT_REF(FQuat,Z_Param_Out_NewRotation);
+		P_GET_UBOOL(Z_Param_bSweep);
+		P_GET_STRUCT_REF(FHitResult,Z_Param_Out_OutHit);
+		P_GET_ENUM(ETeleportType,Z_Param_Teleport);
+		P_FINISH;
+		P_NATIVE_BEGIN;
+		P_THIS->BP_SafeMoveUpdatedComponent(Z_Param_Out_Delta,Z_Param_Out_NewRotation,Z_Param_bSweep,Z_Param_Out_OutHit,ETeleportType(Z_Param_Teleport));
 		P_NATIVE_END;
 	}
 	DEFINE_FUNCTION(UNewCharacterMovementComponent::execSetWallInfo)
@@ -2215,6 +2504,14 @@ void FOnFastSwimStop_DelegateWrapper(const FMulticastScriptDelegate& OnFastSwimS
 	{
 		UClass* Class = UNewCharacterMovementComponent::StaticClass();
 		static const FNameNativePtrPair Funcs[] = {
+			{ "BP_ApplyRootMotionToVelocity", &UNewCharacterMovementComponent::execBP_ApplyRootMotionToVelocity },
+			{ "BP_HandleImpact", &UNewCharacterMovementComponent::execBP_HandleImpact },
+			{ "BP_HasAnimRootMotion", &UNewCharacterMovementComponent::execBP_HasAnimRootMotion },
+			{ "BP_HasOverrideVelocity", &UNewCharacterMovementComponent::execBP_HasOverrideVelocity },
+			{ "BP_MoveComponent", &UNewCharacterMovementComponent::execBP_MoveComponent },
+			{ "BP_RestorePreAdditiveRootMotionVelocity", &UNewCharacterMovementComponent::execBP_RestorePreAdditiveRootMotionVelocity },
+			{ "BP_SafeMoveUpdatedComponent", &UNewCharacterMovementComponent::execBP_SafeMoveUpdatedComponent },
+			{ "BP_SlideAlongSurface", &UNewCharacterMovementComponent::execBP_SlideAlongSurface },
 			{ "CanAutoSlide", &UNewCharacterMovementComponent::execCanAutoSlide },
 			{ "CanClimb", &UNewCharacterMovementComponent::execCanClimb },
 			{ "CanClimbUp", &UNewCharacterMovementComponent::execCanClimbUp },
@@ -2234,6 +2531,7 @@ void FOnFastSwimStop_DelegateWrapper(const FMulticastScriptDelegate& OnFastSwimS
 			{ "FlyingPhysics", &UNewCharacterMovementComponent::execFlyingPhysics },
 			{ "GetCurrentFloorAngle", &UNewCharacterMovementComponent::execGetCurrentFloorAngle },
 			{ "GetDashLocation", &UNewCharacterMovementComponent::execGetDashLocation },
+			{ "GetMinTickTime", &UNewCharacterMovementComponent::execGetMinTickTime },
 			{ "GetProneHalfHeight", &UNewCharacterMovementComponent::execGetProneHalfHeight },
 			{ "GetSlideHalfHeight", &UNewCharacterMovementComponent::execGetSlideHalfHeight },
 			{ "GetUnrotatedClimbVelocity", &UNewCharacterMovementComponent::execGetUnrotatedClimbVelocity },
@@ -2245,6 +2543,7 @@ void FOnFastSwimStop_DelegateWrapper(const FMulticastScriptDelegate& OnFastSwimS
 			{ "IsDashing", &UNewCharacterMovementComponent::execIsDashing },
 			{ "IsFastFlying", &UNewCharacterMovementComponent::execIsFastFlying },
 			{ "IsFastSwimming", &UNewCharacterMovementComponent::execIsFastSwimming },
+			{ "IsInCustomAdvancedMovement", &UNewCharacterMovementComponent::execIsInCustomAdvancedMovement },
 			{ "IsInCustomExtended", &UNewCharacterMovementComponent::execIsInCustomExtended },
 			{ "IsMantling", &UNewCharacterMovementComponent::execIsMantling },
 			{ "IsMovementMode", &UNewCharacterMovementComponent::execIsMovementMode },
@@ -2310,6 +2609,466 @@ void FOnFastSwimStop_DelegateWrapper(const FMulticastScriptDelegate& OnFastSwimS
 			{ "WantsToProne", &UNewCharacterMovementComponent::execWantsToProne },
 		};
 		FNativeFunctionRegistrar::RegisterFunctions(Class, Funcs, UE_ARRAY_COUNT(Funcs));
+	}
+	struct Z_Construct_UFunction_UNewCharacterMovementComponent_BP_ApplyRootMotionToVelocity_Statics
+	{
+		struct NewCharacterMovementComponent_eventBP_ApplyRootMotionToVelocity_Parms
+		{
+			float DeltaTime;
+		};
+		static const UECodeGen_Private::FFloatPropertyParams NewProp_DeltaTime;
+		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UECodeGen_Private::FFunctionParams FuncParams;
+	};
+	const UECodeGen_Private::FFloatPropertyParams Z_Construct_UFunction_UNewCharacterMovementComponent_BP_ApplyRootMotionToVelocity_Statics::NewProp_DeltaTime = { "DeltaTime", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(NewCharacterMovementComponent_eventBP_ApplyRootMotionToVelocity_Parms, DeltaTime), METADATA_PARAMS(0, nullptr) };
+	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UNewCharacterMovementComponent_BP_ApplyRootMotionToVelocity_Statics::PropPointers[] = {
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UNewCharacterMovementComponent_BP_ApplyRootMotionToVelocity_Statics::NewProp_DeltaTime,
+	};
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UNewCharacterMovementComponent_BP_ApplyRootMotionToVelocity_Statics::Function_MetaDataParams[] = {
+		{ "Category", "CharacterMovement" },
+		{ "Comment", "/**\n\x09 * Applies the current root motion to the velocity of the character for the given frame.\n\x09 * This function is callable from Blueprints.\n\x09 *\n\x09 * @param DeltaTime The time step for the current frame, used to calculate the applied motion.\n\x09 */" },
+		{ "ModuleRelativePath", "Public/NewCharacterMovementComponent.h" },
+		{ "ToolTip", "Applies the current root motion to the velocity of the character for the given frame.\nThis function is callable from Blueprints.\n\n@param DeltaTime The time step for the current frame, used to calculate the applied motion." },
+	};
+#endif
+	const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UNewCharacterMovementComponent_BP_ApplyRootMotionToVelocity_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UNewCharacterMovementComponent, nullptr, "BP_ApplyRootMotionToVelocity", nullptr, nullptr, Z_Construct_UFunction_UNewCharacterMovementComponent_BP_ApplyRootMotionToVelocity_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UNewCharacterMovementComponent_BP_ApplyRootMotionToVelocity_Statics::PropPointers), sizeof(Z_Construct_UFunction_UNewCharacterMovementComponent_BP_ApplyRootMotionToVelocity_Statics::NewCharacterMovementComponent_eventBP_ApplyRootMotionToVelocity_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UNewCharacterMovementComponent_BP_ApplyRootMotionToVelocity_Statics::Function_MetaDataParams), Z_Construct_UFunction_UNewCharacterMovementComponent_BP_ApplyRootMotionToVelocity_Statics::Function_MetaDataParams) };
+	static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UNewCharacterMovementComponent_BP_ApplyRootMotionToVelocity_Statics::PropPointers) < 2048);
+	static_assert(sizeof(Z_Construct_UFunction_UNewCharacterMovementComponent_BP_ApplyRootMotionToVelocity_Statics::NewCharacterMovementComponent_eventBP_ApplyRootMotionToVelocity_Parms) < MAX_uint16);
+	UFunction* Z_Construct_UFunction_UNewCharacterMovementComponent_BP_ApplyRootMotionToVelocity()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UNewCharacterMovementComponent_BP_ApplyRootMotionToVelocity_Statics::FuncParams);
+		}
+		return ReturnFunction;
+	}
+	struct Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HandleImpact_Statics
+	{
+		struct NewCharacterMovementComponent_eventBP_HandleImpact_Parms
+		{
+			FHitResult Impact;
+			float TimeSlice;
+			FVector MoveDelta;
+		};
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_Impact_MetaData[];
+#endif
+		static const UECodeGen_Private::FStructPropertyParams NewProp_Impact;
+		static const UECodeGen_Private::FFloatPropertyParams NewProp_TimeSlice;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_MoveDelta_MetaData[];
+#endif
+		static const UECodeGen_Private::FStructPropertyParams NewProp_MoveDelta;
+		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UECodeGen_Private::FFunctionParams FuncParams;
+	};
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HandleImpact_Statics::NewProp_Impact_MetaData[] = {
+		{ "NativeConst", "" },
+	};
+#endif
+	const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HandleImpact_Statics::NewProp_Impact = { "Impact", nullptr, (EPropertyFlags)0x0010008008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(NewCharacterMovementComponent_eventBP_HandleImpact_Parms, Impact), Z_Construct_UScriptStruct_FHitResult, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HandleImpact_Statics::NewProp_Impact_MetaData), Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HandleImpact_Statics::NewProp_Impact_MetaData) }; // 1891709922
+	const UECodeGen_Private::FFloatPropertyParams Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HandleImpact_Statics::NewProp_TimeSlice = { "TimeSlice", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(NewCharacterMovementComponent_eventBP_HandleImpact_Parms, TimeSlice), METADATA_PARAMS(0, nullptr) };
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HandleImpact_Statics::NewProp_MoveDelta_MetaData[] = {
+		{ "NativeConst", "" },
+	};
+#endif
+	const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HandleImpact_Statics::NewProp_MoveDelta = { "MoveDelta", nullptr, (EPropertyFlags)0x0010000008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(NewCharacterMovementComponent_eventBP_HandleImpact_Parms, MoveDelta), Z_Construct_UScriptStruct_FVector, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HandleImpact_Statics::NewProp_MoveDelta_MetaData), Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HandleImpact_Statics::NewProp_MoveDelta_MetaData) };
+	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HandleImpact_Statics::PropPointers[] = {
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HandleImpact_Statics::NewProp_Impact,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HandleImpact_Statics::NewProp_TimeSlice,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HandleImpact_Statics::NewProp_MoveDelta,
+	};
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HandleImpact_Statics::Function_MetaDataParams[] = {
+		{ "Category", "CharacterMovement" },
+		{ "Comment", "/**\n\x09 * Handles the impact of the character with a surface or object during movement.\n\x09 * This function is callable from Blueprints.\n\x09 *\n\x09 * @param Impact The hit result containing details of the impact.\n\x09 * @param TimeSlice The time slice of the movement step that led to the impact.\n\x09 * @param MoveDelta The movement delta attempted before the impact occurred.\n\x09 */" },
+		{ "ModuleRelativePath", "Public/NewCharacterMovementComponent.h" },
+		{ "ToolTip", "Handles the impact of the character with a surface or object during movement.\nThis function is callable from Blueprints.\n\n@param Impact The hit result containing details of the impact.\n@param TimeSlice The time slice of the movement step that led to the impact.\n@param MoveDelta The movement delta attempted before the impact occurred." },
+	};
+#endif
+	const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HandleImpact_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UNewCharacterMovementComponent, nullptr, "BP_HandleImpact", nullptr, nullptr, Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HandleImpact_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HandleImpact_Statics::PropPointers), sizeof(Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HandleImpact_Statics::NewCharacterMovementComponent_eventBP_HandleImpact_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04C20401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HandleImpact_Statics::Function_MetaDataParams), Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HandleImpact_Statics::Function_MetaDataParams) };
+	static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HandleImpact_Statics::PropPointers) < 2048);
+	static_assert(sizeof(Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HandleImpact_Statics::NewCharacterMovementComponent_eventBP_HandleImpact_Parms) < MAX_uint16);
+	UFunction* Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HandleImpact()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HandleImpact_Statics::FuncParams);
+		}
+		return ReturnFunction;
+	}
+	struct Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HasAnimRootMotion_Statics
+	{
+		struct NewCharacterMovementComponent_eventBP_HasAnimRootMotion_Parms
+		{
+			bool ReturnValue;
+		};
+		static void NewProp_ReturnValue_SetBit(void* Obj);
+		static const UECodeGen_Private::FBoolPropertyParams NewProp_ReturnValue;
+		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UECodeGen_Private::FFunctionParams FuncParams;
+	};
+	void Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HasAnimRootMotion_Statics::NewProp_ReturnValue_SetBit(void* Obj)
+	{
+		((NewCharacterMovementComponent_eventBP_HasAnimRootMotion_Parms*)Obj)->ReturnValue = 1;
+	}
+	const UECodeGen_Private::FBoolPropertyParams Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HasAnimRootMotion_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, sizeof(bool), sizeof(NewCharacterMovementComponent_eventBP_HasAnimRootMotion_Parms), &Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HasAnimRootMotion_Statics::NewProp_ReturnValue_SetBit, METADATA_PARAMS(0, nullptr) };
+	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HasAnimRootMotion_Statics::PropPointers[] = {
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HasAnimRootMotion_Statics::NewProp_ReturnValue,
+	};
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HasAnimRootMotion_Statics::Function_MetaDataParams[] = {
+		{ "Category", "CharacterMovement" },
+		{ "Comment", "/**\n\x09 * Determines if the character currently has animation-based root motion active.\n\x09 * This function is Blueprint-pure.\n\x09 *\n\x09 * @return True if animation root motion is active, false otherwise.\n\x09 */" },
+		{ "ModuleRelativePath", "Public/NewCharacterMovementComponent.h" },
+		{ "ToolTip", "Determines if the character currently has animation-based root motion active.\nThis function is Blueprint-pure.\n\n@return True if animation root motion is active, false otherwise." },
+	};
+#endif
+	const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HasAnimRootMotion_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UNewCharacterMovementComponent, nullptr, "BP_HasAnimRootMotion", nullptr, nullptr, Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HasAnimRootMotion_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HasAnimRootMotion_Statics::PropPointers), sizeof(Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HasAnimRootMotion_Statics::NewCharacterMovementComponent_eventBP_HasAnimRootMotion_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x14020401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HasAnimRootMotion_Statics::Function_MetaDataParams), Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HasAnimRootMotion_Statics::Function_MetaDataParams) };
+	static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HasAnimRootMotion_Statics::PropPointers) < 2048);
+	static_assert(sizeof(Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HasAnimRootMotion_Statics::NewCharacterMovementComponent_eventBP_HasAnimRootMotion_Parms) < MAX_uint16);
+	UFunction* Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HasAnimRootMotion()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HasAnimRootMotion_Statics::FuncParams);
+		}
+		return ReturnFunction;
+	}
+	struct Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HasOverrideVelocity_Statics
+	{
+		struct NewCharacterMovementComponent_eventBP_HasOverrideVelocity_Parms
+		{
+			bool ReturnValue;
+		};
+		static void NewProp_ReturnValue_SetBit(void* Obj);
+		static const UECodeGen_Private::FBoolPropertyParams NewProp_ReturnValue;
+		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UECodeGen_Private::FFunctionParams FuncParams;
+	};
+	void Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HasOverrideVelocity_Statics::NewProp_ReturnValue_SetBit(void* Obj)
+	{
+		((NewCharacterMovementComponent_eventBP_HasOverrideVelocity_Parms*)Obj)->ReturnValue = 1;
+	}
+	const UECodeGen_Private::FBoolPropertyParams Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HasOverrideVelocity_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, sizeof(bool), sizeof(NewCharacterMovementComponent_eventBP_HasOverrideVelocity_Parms), &Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HasOverrideVelocity_Statics::NewProp_ReturnValue_SetBit, METADATA_PARAMS(0, nullptr) };
+	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HasOverrideVelocity_Statics::PropPointers[] = {
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HasOverrideVelocity_Statics::NewProp_ReturnValue,
+	};
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HasOverrideVelocity_Statics::Function_MetaDataParams[] = {
+		{ "Category", "CharacterMovement" },
+		{ "Comment", "/**\n\x09 * Checks if the current root motion has an override velocity.\n\x09 * This function is Blueprint-pure, meaning it does not modify the state and can be used as a condition in Blueprints.\n\x09 *\n\x09 * @return True if there is an override velocity in the current root motion, false otherwise.\n\x09 */" },
+		{ "ModuleRelativePath", "Public/NewCharacterMovementComponent.h" },
+		{ "ToolTip", "Checks if the current root motion has an override velocity.\nThis function is Blueprint-pure, meaning it does not modify the state and can be used as a condition in Blueprints.\n\n@return True if there is an override velocity in the current root motion, false otherwise." },
+	};
+#endif
+	const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HasOverrideVelocity_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UNewCharacterMovementComponent, nullptr, "BP_HasOverrideVelocity", nullptr, nullptr, Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HasOverrideVelocity_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HasOverrideVelocity_Statics::PropPointers), sizeof(Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HasOverrideVelocity_Statics::NewCharacterMovementComponent_eventBP_HasOverrideVelocity_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x54020401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HasOverrideVelocity_Statics::Function_MetaDataParams), Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HasOverrideVelocity_Statics::Function_MetaDataParams) };
+	static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HasOverrideVelocity_Statics::PropPointers) < 2048);
+	static_assert(sizeof(Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HasOverrideVelocity_Statics::NewCharacterMovementComponent_eventBP_HasOverrideVelocity_Parms) < MAX_uint16);
+	UFunction* Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HasOverrideVelocity()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HasOverrideVelocity_Statics::FuncParams);
+		}
+		return ReturnFunction;
+	}
+	struct Z_Construct_UFunction_UNewCharacterMovementComponent_BP_MoveComponent_Statics
+	{
+		struct NewCharacterMovementComponent_eventBP_MoveComponent_Parms
+		{
+			USceneComponent* Component;
+			FVector Delta;
+			FQuat NewRotation;
+			bool bSweep;
+			FHitResult OutHit;
+			TEnumAsByte<EMoveComponentBPFlags> MoveFlags;
+			ETeleportType Teleport;
+			bool ReturnValue;
+		};
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_Component_MetaData[];
+#endif
+		static const UECodeGen_Private::FObjectPropertyParams NewProp_Component;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_Delta_MetaData[];
+#endif
+		static const UECodeGen_Private::FStructPropertyParams NewProp_Delta;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_NewRotation_MetaData[];
+#endif
+		static const UECodeGen_Private::FStructPropertyParams NewProp_NewRotation;
+		static void NewProp_bSweep_SetBit(void* Obj);
+		static const UECodeGen_Private::FBoolPropertyParams NewProp_bSweep;
+		static const UECodeGen_Private::FStructPropertyParams NewProp_OutHit;
+		static const UECodeGen_Private::FBytePropertyParams NewProp_MoveFlags;
+		static const UECodeGen_Private::FBytePropertyParams NewProp_Teleport_Underlying;
+		static const UECodeGen_Private::FEnumPropertyParams NewProp_Teleport;
+		static void NewProp_ReturnValue_SetBit(void* Obj);
+		static const UECodeGen_Private::FBoolPropertyParams NewProp_ReturnValue;
+		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UECodeGen_Private::FFunctionParams FuncParams;
+	};
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UNewCharacterMovementComponent_BP_MoveComponent_Statics::NewProp_Component_MetaData[] = {
+		{ "EditInline", "true" },
+	};
+#endif
+	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_UNewCharacterMovementComponent_BP_MoveComponent_Statics::NewProp_Component = { "Component", nullptr, (EPropertyFlags)0x0010000000080080, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(NewCharacterMovementComponent_eventBP_MoveComponent_Parms, Component), Z_Construct_UClass_USceneComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UNewCharacterMovementComponent_BP_MoveComponent_Statics::NewProp_Component_MetaData), Z_Construct_UFunction_UNewCharacterMovementComponent_BP_MoveComponent_Statics::NewProp_Component_MetaData) };
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UNewCharacterMovementComponent_BP_MoveComponent_Statics::NewProp_Delta_MetaData[] = {
+		{ "NativeConst", "" },
+	};
+#endif
+	const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UNewCharacterMovementComponent_BP_MoveComponent_Statics::NewProp_Delta = { "Delta", nullptr, (EPropertyFlags)0x0010000008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(NewCharacterMovementComponent_eventBP_MoveComponent_Parms, Delta), Z_Construct_UScriptStruct_FVector, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UNewCharacterMovementComponent_BP_MoveComponent_Statics::NewProp_Delta_MetaData), Z_Construct_UFunction_UNewCharacterMovementComponent_BP_MoveComponent_Statics::NewProp_Delta_MetaData) };
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UNewCharacterMovementComponent_BP_MoveComponent_Statics::NewProp_NewRotation_MetaData[] = {
+		{ "NativeConst", "" },
+	};
+#endif
+	const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UNewCharacterMovementComponent_BP_MoveComponent_Statics::NewProp_NewRotation = { "NewRotation", nullptr, (EPropertyFlags)0x0010000008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(NewCharacterMovementComponent_eventBP_MoveComponent_Parms, NewRotation), Z_Construct_UScriptStruct_FQuat, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UNewCharacterMovementComponent_BP_MoveComponent_Statics::NewProp_NewRotation_MetaData), Z_Construct_UFunction_UNewCharacterMovementComponent_BP_MoveComponent_Statics::NewProp_NewRotation_MetaData) };
+	void Z_Construct_UFunction_UNewCharacterMovementComponent_BP_MoveComponent_Statics::NewProp_bSweep_SetBit(void* Obj)
+	{
+		((NewCharacterMovementComponent_eventBP_MoveComponent_Parms*)Obj)->bSweep = 1;
+	}
+	const UECodeGen_Private::FBoolPropertyParams Z_Construct_UFunction_UNewCharacterMovementComponent_BP_MoveComponent_Statics::NewProp_bSweep = { "bSweep", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, sizeof(bool), sizeof(NewCharacterMovementComponent_eventBP_MoveComponent_Parms), &Z_Construct_UFunction_UNewCharacterMovementComponent_BP_MoveComponent_Statics::NewProp_bSweep_SetBit, METADATA_PARAMS(0, nullptr) };
+	const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UNewCharacterMovementComponent_BP_MoveComponent_Statics::NewProp_OutHit = { "OutHit", nullptr, (EPropertyFlags)0x0010008008000180, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(NewCharacterMovementComponent_eventBP_MoveComponent_Parms, OutHit), Z_Construct_UScriptStruct_FHitResult, METADATA_PARAMS(0, nullptr) }; // 1891709922
+	const UECodeGen_Private::FBytePropertyParams Z_Construct_UFunction_UNewCharacterMovementComponent_BP_MoveComponent_Statics::NewProp_MoveFlags = { "MoveFlags", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(NewCharacterMovementComponent_eventBP_MoveComponent_Parms, MoveFlags), Z_Construct_UEnum_CharacterLocomotionSystem_EMoveComponentBPFlags, METADATA_PARAMS(0, nullptr) }; // 3604982465
+	const UECodeGen_Private::FBytePropertyParams Z_Construct_UFunction_UNewCharacterMovementComponent_BP_MoveComponent_Statics::NewProp_Teleport_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, nullptr, METADATA_PARAMS(0, nullptr) };
+	const UECodeGen_Private::FEnumPropertyParams Z_Construct_UFunction_UNewCharacterMovementComponent_BP_MoveComponent_Statics::NewProp_Teleport = { "Teleport", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(NewCharacterMovementComponent_eventBP_MoveComponent_Parms, Teleport), Z_Construct_UEnum_Engine_ETeleportType, METADATA_PARAMS(0, nullptr) }; // 2411134101
+	void Z_Construct_UFunction_UNewCharacterMovementComponent_BP_MoveComponent_Statics::NewProp_ReturnValue_SetBit(void* Obj)
+	{
+		((NewCharacterMovementComponent_eventBP_MoveComponent_Parms*)Obj)->ReturnValue = 1;
+	}
+	const UECodeGen_Private::FBoolPropertyParams Z_Construct_UFunction_UNewCharacterMovementComponent_BP_MoveComponent_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, sizeof(bool), sizeof(NewCharacterMovementComponent_eventBP_MoveComponent_Parms), &Z_Construct_UFunction_UNewCharacterMovementComponent_BP_MoveComponent_Statics::NewProp_ReturnValue_SetBit, METADATA_PARAMS(0, nullptr) };
+	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UNewCharacterMovementComponent_BP_MoveComponent_Statics::PropPointers[] = {
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UNewCharacterMovementComponent_BP_MoveComponent_Statics::NewProp_Component,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UNewCharacterMovementComponent_BP_MoveComponent_Statics::NewProp_Delta,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UNewCharacterMovementComponent_BP_MoveComponent_Statics::NewProp_NewRotation,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UNewCharacterMovementComponent_BP_MoveComponent_Statics::NewProp_bSweep,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UNewCharacterMovementComponent_BP_MoveComponent_Statics::NewProp_OutHit,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UNewCharacterMovementComponent_BP_MoveComponent_Statics::NewProp_MoveFlags,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UNewCharacterMovementComponent_BP_MoveComponent_Statics::NewProp_Teleport_Underlying,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UNewCharacterMovementComponent_BP_MoveComponent_Statics::NewProp_Teleport,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UNewCharacterMovementComponent_BP_MoveComponent_Statics::NewProp_ReturnValue,
+	};
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UNewCharacterMovementComponent_BP_MoveComponent_Statics::Function_MetaDataParams[] = {
+		{ "Category", "CharacterMovement" },
+		{ "Comment", "/**\n\x09 * Moves the specified component by the given delta and applies a new rotation.\n\x09 *\n\x09 * @param Component   The scene component to move.\n\x09 * @param Delta       The translation vector to apply.\n\x09 * @param NewRotation The new rotation to apply to the component.\n\x09 * @param bSweep      Whether to sweep for collisions during the move.\n\x09 * @param OutHit      The result of any blocking collision that occurs if bSweep is true.\n\x09 * @param MoveFlags   Flags controlling the move behavior.\n\x09 * @param Teleport    The teleportation type (whether to teleport physics bodies or not).\n\x09 * @return            True if the move was successful, false if a collision occurred.\n\x09 */" },
+		{ "ModuleRelativePath", "Public/NewCharacterMovementComponent.h" },
+		{ "ToolTip", "Moves the specified component by the given delta and applies a new rotation.\n\n@param Component   The scene component to move.\n@param Delta       The translation vector to apply.\n@param NewRotation The new rotation to apply to the component.\n@param bSweep      Whether to sweep for collisions during the move.\n@param OutHit      The result of any blocking collision that occurs if bSweep is true.\n@param MoveFlags   Flags controlling the move behavior.\n@param Teleport    The teleportation type (whether to teleport physics bodies or not).\n@return            True if the move was successful, false if a collision occurred." },
+	};
+#endif
+	const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UNewCharacterMovementComponent_BP_MoveComponent_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UNewCharacterMovementComponent, nullptr, "BP_MoveComponent", nullptr, nullptr, Z_Construct_UFunction_UNewCharacterMovementComponent_BP_MoveComponent_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UNewCharacterMovementComponent_BP_MoveComponent_Statics::PropPointers), sizeof(Z_Construct_UFunction_UNewCharacterMovementComponent_BP_MoveComponent_Statics::NewCharacterMovementComponent_eventBP_MoveComponent_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04C22401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UNewCharacterMovementComponent_BP_MoveComponent_Statics::Function_MetaDataParams), Z_Construct_UFunction_UNewCharacterMovementComponent_BP_MoveComponent_Statics::Function_MetaDataParams) };
+	static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UNewCharacterMovementComponent_BP_MoveComponent_Statics::PropPointers) < 2048);
+	static_assert(sizeof(Z_Construct_UFunction_UNewCharacterMovementComponent_BP_MoveComponent_Statics::NewCharacterMovementComponent_eventBP_MoveComponent_Parms) < MAX_uint16);
+	UFunction* Z_Construct_UFunction_UNewCharacterMovementComponent_BP_MoveComponent()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UNewCharacterMovementComponent_BP_MoveComponent_Statics::FuncParams);
+		}
+		return ReturnFunction;
+	}
+	struct Z_Construct_UFunction_UNewCharacterMovementComponent_BP_RestorePreAdditiveRootMotionVelocity_Statics
+	{
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UECodeGen_Private::FFunctionParams FuncParams;
+	};
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UNewCharacterMovementComponent_BP_RestorePreAdditiveRootMotionVelocity_Statics::Function_MetaDataParams[] = {
+		{ "Category", "CharacterMovement" },
+		{ "Comment", "/**\n\x09 * Restores the character's velocity to its state before any additive root motion was applied.\n\x09 * This function is useful for cases where you want to reset the velocity after temporary modifications\n\x09 * by root motion, ensuring that the character's original movement velocity is preserved.\n\x09 *\n\x09 * This function can be called from Blueprints.\n\x09 */" },
+		{ "ModuleRelativePath", "Public/NewCharacterMovementComponent.h" },
+		{ "ToolTip", "Restores the character's velocity to its state before any additive root motion was applied.\nThis function is useful for cases where you want to reset the velocity after temporary modifications\nby root motion, ensuring that the character's original movement velocity is preserved.\n\nThis function can be called from Blueprints." },
+	};
+#endif
+	const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UNewCharacterMovementComponent_BP_RestorePreAdditiveRootMotionVelocity_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UNewCharacterMovementComponent, nullptr, "BP_RestorePreAdditiveRootMotionVelocity", nullptr, nullptr, nullptr, 0, 0, RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UNewCharacterMovementComponent_BP_RestorePreAdditiveRootMotionVelocity_Statics::Function_MetaDataParams), Z_Construct_UFunction_UNewCharacterMovementComponent_BP_RestorePreAdditiveRootMotionVelocity_Statics::Function_MetaDataParams) };
+	UFunction* Z_Construct_UFunction_UNewCharacterMovementComponent_BP_RestorePreAdditiveRootMotionVelocity()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UNewCharacterMovementComponent_BP_RestorePreAdditiveRootMotionVelocity_Statics::FuncParams);
+		}
+		return ReturnFunction;
+	}
+	struct Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SafeMoveUpdatedComponent_Statics
+	{
+		struct NewCharacterMovementComponent_eventBP_SafeMoveUpdatedComponent_Parms
+		{
+			FVector Delta;
+			FQuat NewRotation;
+			bool bSweep;
+			FHitResult OutHit;
+			ETeleportType Teleport;
+		};
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_Delta_MetaData[];
+#endif
+		static const UECodeGen_Private::FStructPropertyParams NewProp_Delta;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_NewRotation_MetaData[];
+#endif
+		static const UECodeGen_Private::FStructPropertyParams NewProp_NewRotation;
+		static void NewProp_bSweep_SetBit(void* Obj);
+		static const UECodeGen_Private::FBoolPropertyParams NewProp_bSweep;
+		static const UECodeGen_Private::FStructPropertyParams NewProp_OutHit;
+		static const UECodeGen_Private::FBytePropertyParams NewProp_Teleport_Underlying;
+		static const UECodeGen_Private::FEnumPropertyParams NewProp_Teleport;
+		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UECodeGen_Private::FFunctionParams FuncParams;
+	};
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SafeMoveUpdatedComponent_Statics::NewProp_Delta_MetaData[] = {
+		{ "NativeConst", "" },
+	};
+#endif
+	const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SafeMoveUpdatedComponent_Statics::NewProp_Delta = { "Delta", nullptr, (EPropertyFlags)0x0010000008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(NewCharacterMovementComponent_eventBP_SafeMoveUpdatedComponent_Parms, Delta), Z_Construct_UScriptStruct_FVector, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SafeMoveUpdatedComponent_Statics::NewProp_Delta_MetaData), Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SafeMoveUpdatedComponent_Statics::NewProp_Delta_MetaData) };
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SafeMoveUpdatedComponent_Statics::NewProp_NewRotation_MetaData[] = {
+		{ "NativeConst", "" },
+	};
+#endif
+	const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SafeMoveUpdatedComponent_Statics::NewProp_NewRotation = { "NewRotation", nullptr, (EPropertyFlags)0x0010000008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(NewCharacterMovementComponent_eventBP_SafeMoveUpdatedComponent_Parms, NewRotation), Z_Construct_UScriptStruct_FQuat, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SafeMoveUpdatedComponent_Statics::NewProp_NewRotation_MetaData), Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SafeMoveUpdatedComponent_Statics::NewProp_NewRotation_MetaData) };
+	void Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SafeMoveUpdatedComponent_Statics::NewProp_bSweep_SetBit(void* Obj)
+	{
+		((NewCharacterMovementComponent_eventBP_SafeMoveUpdatedComponent_Parms*)Obj)->bSweep = 1;
+	}
+	const UECodeGen_Private::FBoolPropertyParams Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SafeMoveUpdatedComponent_Statics::NewProp_bSweep = { "bSweep", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, sizeof(bool), sizeof(NewCharacterMovementComponent_eventBP_SafeMoveUpdatedComponent_Parms), &Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SafeMoveUpdatedComponent_Statics::NewProp_bSweep_SetBit, METADATA_PARAMS(0, nullptr) };
+	const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SafeMoveUpdatedComponent_Statics::NewProp_OutHit = { "OutHit", nullptr, (EPropertyFlags)0x0010008000000180, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(NewCharacterMovementComponent_eventBP_SafeMoveUpdatedComponent_Parms, OutHit), Z_Construct_UScriptStruct_FHitResult, METADATA_PARAMS(0, nullptr) }; // 1891709922
+	const UECodeGen_Private::FBytePropertyParams Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SafeMoveUpdatedComponent_Statics::NewProp_Teleport_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, nullptr, METADATA_PARAMS(0, nullptr) };
+	const UECodeGen_Private::FEnumPropertyParams Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SafeMoveUpdatedComponent_Statics::NewProp_Teleport = { "Teleport", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(NewCharacterMovementComponent_eventBP_SafeMoveUpdatedComponent_Parms, Teleport), Z_Construct_UEnum_Engine_ETeleportType, METADATA_PARAMS(0, nullptr) }; // 2411134101
+	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SafeMoveUpdatedComponent_Statics::PropPointers[] = {
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SafeMoveUpdatedComponent_Statics::NewProp_Delta,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SafeMoveUpdatedComponent_Statics::NewProp_NewRotation,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SafeMoveUpdatedComponent_Statics::NewProp_bSweep,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SafeMoveUpdatedComponent_Statics::NewProp_OutHit,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SafeMoveUpdatedComponent_Statics::NewProp_Teleport_Underlying,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SafeMoveUpdatedComponent_Statics::NewProp_Teleport,
+	};
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SafeMoveUpdatedComponent_Statics::Function_MetaDataParams[] = {
+		{ "Category", "CharacterMovement" },
+		{ "Comment", "/**\n\x09 * Safely moves the updated component using the specified delta and rotation, with optional sweeping and teleportation.\n\x09 * This function is callable from Blueprints and allows handling of collisions during movement.\n\x09 *\n\x09 * @param Delta      The translation vector to move the component by.\n\x09 * @param NewRotation The new rotation to apply to the component.\n\x09 * @param bSweep     Whether to sweep (trace) for obstacles during the movement.\n\x09 * @param OutHit     The hit result populated if the movement is obstructed by a blocking hit.\n\x09 * @param Teleport   The teleportation type, determining whether physics interactions should occur during the move.\n\x09 */" },
+		{ "ModuleRelativePath", "Public/NewCharacterMovementComponent.h" },
+		{ "ToolTip", "Safely moves the updated component using the specified delta and rotation, with optional sweeping and teleportation.\nThis function is callable from Blueprints and allows handling of collisions during movement.\n\n@param Delta      The translation vector to move the component by.\n@param NewRotation The new rotation to apply to the component.\n@param bSweep     Whether to sweep (trace) for obstacles during the movement.\n@param OutHit     The hit result populated if the movement is obstructed by a blocking hit.\n@param Teleport   The teleportation type, determining whether physics interactions should occur during the move." },
+	};
+#endif
+	const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SafeMoveUpdatedComponent_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UNewCharacterMovementComponent, nullptr, "BP_SafeMoveUpdatedComponent", nullptr, nullptr, Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SafeMoveUpdatedComponent_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SafeMoveUpdatedComponent_Statics::PropPointers), sizeof(Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SafeMoveUpdatedComponent_Statics::NewCharacterMovementComponent_eventBP_SafeMoveUpdatedComponent_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04C20401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SafeMoveUpdatedComponent_Statics::Function_MetaDataParams), Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SafeMoveUpdatedComponent_Statics::Function_MetaDataParams) };
+	static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SafeMoveUpdatedComponent_Statics::PropPointers) < 2048);
+	static_assert(sizeof(Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SafeMoveUpdatedComponent_Statics::NewCharacterMovementComponent_eventBP_SafeMoveUpdatedComponent_Parms) < MAX_uint16);
+	UFunction* Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SafeMoveUpdatedComponent()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SafeMoveUpdatedComponent_Statics::FuncParams);
+		}
+		return ReturnFunction;
+	}
+	struct Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SlideAlongSurface_Statics
+	{
+		struct NewCharacterMovementComponent_eventBP_SlideAlongSurface_Parms
+		{
+			FVector Delta;
+			float Time;
+			FVector InNormal;
+			FHitResult Hit;
+			bool bHandleImpact;
+		};
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_Delta_MetaData[];
+#endif
+		static const UECodeGen_Private::FStructPropertyParams NewProp_Delta;
+		static const UECodeGen_Private::FFloatPropertyParams NewProp_Time;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_InNormal_MetaData[];
+#endif
+		static const UECodeGen_Private::FStructPropertyParams NewProp_InNormal;
+		static const UECodeGen_Private::FStructPropertyParams NewProp_Hit;
+		static void NewProp_bHandleImpact_SetBit(void* Obj);
+		static const UECodeGen_Private::FBoolPropertyParams NewProp_bHandleImpact;
+		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UECodeGen_Private::FFunctionParams FuncParams;
+	};
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SlideAlongSurface_Statics::NewProp_Delta_MetaData[] = {
+		{ "NativeConst", "" },
+	};
+#endif
+	const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SlideAlongSurface_Statics::NewProp_Delta = { "Delta", nullptr, (EPropertyFlags)0x0010000008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(NewCharacterMovementComponent_eventBP_SlideAlongSurface_Parms, Delta), Z_Construct_UScriptStruct_FVector, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SlideAlongSurface_Statics::NewProp_Delta_MetaData), Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SlideAlongSurface_Statics::NewProp_Delta_MetaData) };
+	const UECodeGen_Private::FFloatPropertyParams Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SlideAlongSurface_Statics::NewProp_Time = { "Time", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(NewCharacterMovementComponent_eventBP_SlideAlongSurface_Parms, Time), METADATA_PARAMS(0, nullptr) };
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SlideAlongSurface_Statics::NewProp_InNormal_MetaData[] = {
+		{ "NativeConst", "" },
+	};
+#endif
+	const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SlideAlongSurface_Statics::NewProp_InNormal = { "InNormal", nullptr, (EPropertyFlags)0x0010000008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(NewCharacterMovementComponent_eventBP_SlideAlongSurface_Parms, InNormal), Z_Construct_UScriptStruct_FVector, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SlideAlongSurface_Statics::NewProp_InNormal_MetaData), Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SlideAlongSurface_Statics::NewProp_InNormal_MetaData) };
+	const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SlideAlongSurface_Statics::NewProp_Hit = { "Hit", nullptr, (EPropertyFlags)0x0010008000000180, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(NewCharacterMovementComponent_eventBP_SlideAlongSurface_Parms, Hit), Z_Construct_UScriptStruct_FHitResult, METADATA_PARAMS(0, nullptr) }; // 1891709922
+	void Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SlideAlongSurface_Statics::NewProp_bHandleImpact_SetBit(void* Obj)
+	{
+		((NewCharacterMovementComponent_eventBP_SlideAlongSurface_Parms*)Obj)->bHandleImpact = 1;
+	}
+	const UECodeGen_Private::FBoolPropertyParams Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SlideAlongSurface_Statics::NewProp_bHandleImpact = { "bHandleImpact", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, sizeof(bool), sizeof(NewCharacterMovementComponent_eventBP_SlideAlongSurface_Parms), &Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SlideAlongSurface_Statics::NewProp_bHandleImpact_SetBit, METADATA_PARAMS(0, nullptr) };
+	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SlideAlongSurface_Statics::PropPointers[] = {
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SlideAlongSurface_Statics::NewProp_Delta,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SlideAlongSurface_Statics::NewProp_Time,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SlideAlongSurface_Statics::NewProp_InNormal,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SlideAlongSurface_Statics::NewProp_Hit,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SlideAlongSurface_Statics::NewProp_bHandleImpact,
+	};
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SlideAlongSurface_Statics::Function_MetaDataParams[] = {
+		{ "Category", "CharacterMovement" },
+		{ "Comment", "/**\n\x09 * Slides the character along a surface based on the given movement delta and normal.\n\x09 * This function is callable from Blueprints.\n\x09 *\n\x09 * @param Delta The desired movement vector.\n\x09 * @param Time The time slice of the movement.\n\x09 * @param InNormal The normal of the surface being slid along.\n\x09 * @param Hit The hit result containing details of any collision encountered during sliding.\n\x09 * @param bHandleImpact Whether to handle impacts during the slide.\n\x09 */" },
+		{ "ModuleRelativePath", "Public/NewCharacterMovementComponent.h" },
+		{ "ToolTip", "Slides the character along a surface based on the given movement delta and normal.\nThis function is callable from Blueprints.\n\n@param Delta The desired movement vector.\n@param Time The time slice of the movement.\n@param InNormal The normal of the surface being slid along.\n@param Hit The hit result containing details of any collision encountered during sliding.\n@param bHandleImpact Whether to handle impacts during the slide." },
+	};
+#endif
+	const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SlideAlongSurface_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UNewCharacterMovementComponent, nullptr, "BP_SlideAlongSurface", nullptr, nullptr, Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SlideAlongSurface_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SlideAlongSurface_Statics::PropPointers), sizeof(Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SlideAlongSurface_Statics::NewCharacterMovementComponent_eventBP_SlideAlongSurface_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04C20401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SlideAlongSurface_Statics::Function_MetaDataParams), Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SlideAlongSurface_Statics::Function_MetaDataParams) };
+	static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SlideAlongSurface_Statics::PropPointers) < 2048);
+	static_assert(sizeof(Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SlideAlongSurface_Statics::NewCharacterMovementComponent_eventBP_SlideAlongSurface_Parms) < MAX_uint16);
+	UFunction* Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SlideAlongSurface()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SlideAlongSurface_Statics::FuncParams);
+		}
+		return ReturnFunction;
 	}
 	struct Z_Construct_UFunction_UNewCharacterMovementComponent_CanAutoSlide_Statics
 	{
@@ -3089,6 +3848,43 @@ void FOnFastSwimStop_DelegateWrapper(const FMulticastScriptDelegate& OnFastSwimS
 		}
 		return ReturnFunction;
 	}
+	struct Z_Construct_UFunction_UNewCharacterMovementComponent_GetMinTickTime_Statics
+	{
+		struct NewCharacterMovementComponent_eventGetMinTickTime_Parms
+		{
+			float ReturnValue;
+		};
+		static const UECodeGen_Private::FFloatPropertyParams NewProp_ReturnValue;
+		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UECodeGen_Private::FFunctionParams FuncParams;
+	};
+	const UECodeGen_Private::FFloatPropertyParams Z_Construct_UFunction_UNewCharacterMovementComponent_GetMinTickTime_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(NewCharacterMovementComponent_eventGetMinTickTime_Parms, ReturnValue), METADATA_PARAMS(0, nullptr) };
+	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UNewCharacterMovementComponent_GetMinTickTime_Statics::PropPointers[] = {
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UNewCharacterMovementComponent_GetMinTickTime_Statics::NewProp_ReturnValue,
+	};
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UNewCharacterMovementComponent_GetMinTickTime_Statics::Function_MetaDataParams[] = {
+		{ "Category", "CharacterMovement" },
+		{ "Comment", "/**\n\x09 * Retrieves the minimum allowed tick time for the character movement component.\n\x09 * This value ensures that the component does not update more frequently than the specified interval,\n\x09 * helping to prevent performance issues due to overly frequent updates.\n\x09 *\n\x09 * @return The minimum tick time, in seconds, as a float.\n\x09 */" },
+		{ "ModuleRelativePath", "Public/NewCharacterMovementComponent.h" },
+		{ "ToolTip", "Retrieves the minimum allowed tick time for the character movement component.\nThis value ensures that the component does not update more frequently than the specified interval,\nhelping to prevent performance issues due to overly frequent updates.\n\n@return The minimum tick time, in seconds, as a float." },
+	};
+#endif
+	const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UNewCharacterMovementComponent_GetMinTickTime_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UNewCharacterMovementComponent, nullptr, "GetMinTickTime", nullptr, nullptr, Z_Construct_UFunction_UNewCharacterMovementComponent_GetMinTickTime_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UNewCharacterMovementComponent_GetMinTickTime_Statics::PropPointers), sizeof(Z_Construct_UFunction_UNewCharacterMovementComponent_GetMinTickTime_Statics::NewCharacterMovementComponent_eventGetMinTickTime_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x54020401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UNewCharacterMovementComponent_GetMinTickTime_Statics::Function_MetaDataParams), Z_Construct_UFunction_UNewCharacterMovementComponent_GetMinTickTime_Statics::Function_MetaDataParams) };
+	static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UNewCharacterMovementComponent_GetMinTickTime_Statics::PropPointers) < 2048);
+	static_assert(sizeof(Z_Construct_UFunction_UNewCharacterMovementComponent_GetMinTickTime_Statics::NewCharacterMovementComponent_eventGetMinTickTime_Parms) < MAX_uint16);
+	UFunction* Z_Construct_UFunction_UNewCharacterMovementComponent_GetMinTickTime()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UNewCharacterMovementComponent_GetMinTickTime_Statics::FuncParams);
+		}
+		return ReturnFunction;
+	}
 	struct Z_Construct_UFunction_UNewCharacterMovementComponent_GetProneHalfHeight_Statics
 	{
 		struct NewCharacterMovementComponent_eventGetProneHalfHeight_Parms
@@ -3535,6 +4331,48 @@ void FOnFastSwimStop_DelegateWrapper(const FMulticastScriptDelegate& OnFastSwimS
 		}
 		return ReturnFunction;
 	}
+	struct Z_Construct_UFunction_UNewCharacterMovementComponent_IsInCustomAdvancedMovement_Statics
+	{
+		struct NewCharacterMovementComponent_eventIsInCustomAdvancedMovement_Parms
+		{
+			bool ReturnValue;
+		};
+		static void NewProp_ReturnValue_SetBit(void* Obj);
+		static const UECodeGen_Private::FBoolPropertyParams NewProp_ReturnValue;
+		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UECodeGen_Private::FFunctionParams FuncParams;
+	};
+	void Z_Construct_UFunction_UNewCharacterMovementComponent_IsInCustomAdvancedMovement_Statics::NewProp_ReturnValue_SetBit(void* Obj)
+	{
+		((NewCharacterMovementComponent_eventIsInCustomAdvancedMovement_Parms*)Obj)->ReturnValue = 1;
+	}
+	const UECodeGen_Private::FBoolPropertyParams Z_Construct_UFunction_UNewCharacterMovementComponent_IsInCustomAdvancedMovement_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, sizeof(bool), sizeof(NewCharacterMovementComponent_eventIsInCustomAdvancedMovement_Parms), &Z_Construct_UFunction_UNewCharacterMovementComponent_IsInCustomAdvancedMovement_Statics::NewProp_ReturnValue_SetBit, METADATA_PARAMS(0, nullptr) };
+	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UNewCharacterMovementComponent_IsInCustomAdvancedMovement_Statics::PropPointers[] = {
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UNewCharacterMovementComponent_IsInCustomAdvancedMovement_Statics::NewProp_ReturnValue,
+	};
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UNewCharacterMovementComponent_IsInCustomAdvancedMovement_Statics::Function_MetaDataParams[] = {
+		{ "Category", "CharcterMovement|AdvancedMovement|Custom" },
+		{ "Comment", "/**\n\x09 * Checks whether the character is currently in a custom advanced movement state.\n\x09 * This function evaluates the current movement state to determine if advanced movement\n\x09 * mechanics are active. It can be used to conditionally execute logic based on the\n\x09 * character's movement state in gameplay.\n\x09 *\n\x09 * @return True if the character is in a custom advanced movement state; false otherwise.\n\x09 */" },
+		{ "ModuleRelativePath", "Public/NewCharacterMovementComponent.h" },
+		{ "ToolTip", "Checks whether the character is currently in a custom advanced movement state.\nThis function evaluates the current movement state to determine if advanced movement\nmechanics are active. It can be used to conditionally execute logic based on the\ncharacter's movement state in gameplay.\n\n@return True if the character is in a custom advanced movement state; false otherwise." },
+	};
+#endif
+	const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UNewCharacterMovementComponent_IsInCustomAdvancedMovement_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UNewCharacterMovementComponent, nullptr, "IsInCustomAdvancedMovement", nullptr, nullptr, Z_Construct_UFunction_UNewCharacterMovementComponent_IsInCustomAdvancedMovement_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UNewCharacterMovementComponent_IsInCustomAdvancedMovement_Statics::PropPointers), sizeof(Z_Construct_UFunction_UNewCharacterMovementComponent_IsInCustomAdvancedMovement_Statics::NewCharacterMovementComponent_eventIsInCustomAdvancedMovement_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x54020401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UNewCharacterMovementComponent_IsInCustomAdvancedMovement_Statics::Function_MetaDataParams), Z_Construct_UFunction_UNewCharacterMovementComponent_IsInCustomAdvancedMovement_Statics::Function_MetaDataParams) };
+	static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UNewCharacterMovementComponent_IsInCustomAdvancedMovement_Statics::PropPointers) < 2048);
+	static_assert(sizeof(Z_Construct_UFunction_UNewCharacterMovementComponent_IsInCustomAdvancedMovement_Statics::NewCharacterMovementComponent_eventIsInCustomAdvancedMovement_Parms) < MAX_uint16);
+	UFunction* Z_Construct_UFunction_UNewCharacterMovementComponent_IsInCustomAdvancedMovement()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UNewCharacterMovementComponent_IsInCustomAdvancedMovement_Statics::FuncParams);
+		}
+		return ReturnFunction;
+	}
 	struct Z_Construct_UFunction_UNewCharacterMovementComponent_IsInCustomExtended_Statics
 	{
 		struct NewCharacterMovementComponent_eventIsInCustomExtended_Parms
@@ -3565,7 +4403,7 @@ void FOnFastSwimStop_DelegateWrapper(const FMulticastScriptDelegate& OnFastSwimS
 		{ "ToolTip", "Checks if the character is currently in a custom extended movement state.\nThis function can be used to determine if the character is actively\nengaged in custom extended movement, enabling conditional logic based\non movement state.\n\n@return True if the character is in custom extended movement; false otherwise." },
 	};
 #endif
-	const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UNewCharacterMovementComponent_IsInCustomExtended_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UNewCharacterMovementComponent, nullptr, "IsInCustomExtended", nullptr, nullptr, Z_Construct_UFunction_UNewCharacterMovementComponent_IsInCustomExtended_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UNewCharacterMovementComponent_IsInCustomExtended_Statics::PropPointers), sizeof(Z_Construct_UFunction_UNewCharacterMovementComponent_IsInCustomExtended_Statics::NewCharacterMovementComponent_eventIsInCustomExtended_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x40020401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UNewCharacterMovementComponent_IsInCustomExtended_Statics::Function_MetaDataParams), Z_Construct_UFunction_UNewCharacterMovementComponent_IsInCustomExtended_Statics::Function_MetaDataParams) };
+	const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UNewCharacterMovementComponent_IsInCustomExtended_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UNewCharacterMovementComponent, nullptr, "IsInCustomExtended", nullptr, nullptr, Z_Construct_UFunction_UNewCharacterMovementComponent_IsInCustomExtended_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UNewCharacterMovementComponent_IsInCustomExtended_Statics::PropPointers), sizeof(Z_Construct_UFunction_UNewCharacterMovementComponent_IsInCustomExtended_Statics::NewCharacterMovementComponent_eventIsInCustomExtended_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x54020401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UNewCharacterMovementComponent_IsInCustomExtended_Statics::Function_MetaDataParams), Z_Construct_UFunction_UNewCharacterMovementComponent_IsInCustomExtended_Statics::Function_MetaDataParams) };
 	static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UNewCharacterMovementComponent_IsInCustomExtended_Statics::PropPointers) < 2048);
 	static_assert(sizeof(Z_Construct_UFunction_UNewCharacterMovementComponent_IsInCustomExtended_Statics::NewCharacterMovementComponent_eventIsInCustomExtended_Parms) < MAX_uint16);
 	UFunction* Z_Construct_UFunction_UNewCharacterMovementComponent_IsInCustomExtended()
@@ -5833,6 +6671,18 @@ void FOnFastSwimStop_DelegateWrapper(const FMulticastScriptDelegate& OnFastSwimS
 #endif
 		static const UECodeGen_Private::FMulticastDelegatePropertyParams NewProp_OnFastSwimStop;
 #if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_OnCustomAdvancedMovementStart_MetaData[];
+#endif
+		static const UECodeGen_Private::FMulticastDelegatePropertyParams NewProp_OnCustomAdvancedMovementStart;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_OnCustomAdvancedMovementInitialized_MetaData[];
+#endif
+		static const UECodeGen_Private::FMulticastDelegatePropertyParams NewProp_OnCustomAdvancedMovementInitialized;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_OnCustomAdvancedMovementStop_MetaData[];
+#endif
+		static const UECodeGen_Private::FMulticastDelegatePropertyParams NewProp_OnCustomAdvancedMovementStop;
+#if WITH_METADATA
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_AdvancedMovementData_MetaData[];
 #endif
 		static const UECodeGen_Private::FObjectPropertyParams NewProp_AdvancedMovementData;
@@ -6026,6 +6876,14 @@ void FOnFastSwimStop_DelegateWrapper(const FMulticastScriptDelegate& OnFastSwimS
 	};
 	static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_UNewCharacterMovementComponent_Statics::DependentSingletons) < 16);
 	const FClassFunctionLinkInfo Z_Construct_UClass_UNewCharacterMovementComponent_Statics::FuncInfo[] = {
+		{ &Z_Construct_UFunction_UNewCharacterMovementComponent_BP_ApplyRootMotionToVelocity, "BP_ApplyRootMotionToVelocity" }, // 605296243
+		{ &Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HandleImpact, "BP_HandleImpact" }, // 984673914
+		{ &Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HasAnimRootMotion, "BP_HasAnimRootMotion" }, // 2010441319
+		{ &Z_Construct_UFunction_UNewCharacterMovementComponent_BP_HasOverrideVelocity, "BP_HasOverrideVelocity" }, // 2989109932
+		{ &Z_Construct_UFunction_UNewCharacterMovementComponent_BP_MoveComponent, "BP_MoveComponent" }, // 750647762
+		{ &Z_Construct_UFunction_UNewCharacterMovementComponent_BP_RestorePreAdditiveRootMotionVelocity, "BP_RestorePreAdditiveRootMotionVelocity" }, // 3668506696
+		{ &Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SafeMoveUpdatedComponent, "BP_SafeMoveUpdatedComponent" }, // 3665687380
+		{ &Z_Construct_UFunction_UNewCharacterMovementComponent_BP_SlideAlongSurface, "BP_SlideAlongSurface" }, // 1025847171
 		{ &Z_Construct_UFunction_UNewCharacterMovementComponent_CanAutoSlide, "CanAutoSlide" }, // 2731824136
 		{ &Z_Construct_UFunction_UNewCharacterMovementComponent_CanClimb, "CanClimb" }, // 2148615799
 		{ &Z_Construct_UFunction_UNewCharacterMovementComponent_CanClimbUp, "CanClimbUp" }, // 831827945
@@ -6045,6 +6903,7 @@ void FOnFastSwimStop_DelegateWrapper(const FMulticastScriptDelegate& OnFastSwimS
 		{ &Z_Construct_UFunction_UNewCharacterMovementComponent_FlyingPhysics, "FlyingPhysics" }, // 2513219034
 		{ &Z_Construct_UFunction_UNewCharacterMovementComponent_GetCurrentFloorAngle, "GetCurrentFloorAngle" }, // 803778940
 		{ &Z_Construct_UFunction_UNewCharacterMovementComponent_GetDashLocation, "GetDashLocation" }, // 1327771869
+		{ &Z_Construct_UFunction_UNewCharacterMovementComponent_GetMinTickTime, "GetMinTickTime" }, // 154037642
 		{ &Z_Construct_UFunction_UNewCharacterMovementComponent_GetProneHalfHeight, "GetProneHalfHeight" }, // 3777656494
 		{ &Z_Construct_UFunction_UNewCharacterMovementComponent_GetSlideHalfHeight, "GetSlideHalfHeight" }, // 532915846
 		{ &Z_Construct_UFunction_UNewCharacterMovementComponent_GetUnrotatedClimbVelocity, "GetUnrotatedClimbVelocity" }, // 229739037
@@ -6056,7 +6915,8 @@ void FOnFastSwimStop_DelegateWrapper(const FMulticastScriptDelegate& OnFastSwimS
 		{ &Z_Construct_UFunction_UNewCharacterMovementComponent_IsDashing, "IsDashing" }, // 78708516
 		{ &Z_Construct_UFunction_UNewCharacterMovementComponent_IsFastFlying, "IsFastFlying" }, // 1216785228
 		{ &Z_Construct_UFunction_UNewCharacterMovementComponent_IsFastSwimming, "IsFastSwimming" }, // 1013923341
-		{ &Z_Construct_UFunction_UNewCharacterMovementComponent_IsInCustomExtended, "IsInCustomExtended" }, // 296525471
+		{ &Z_Construct_UFunction_UNewCharacterMovementComponent_IsInCustomAdvancedMovement, "IsInCustomAdvancedMovement" }, // 2057367943
+		{ &Z_Construct_UFunction_UNewCharacterMovementComponent_IsInCustomExtended, "IsInCustomExtended" }, // 2291035007
 		{ &Z_Construct_UFunction_UNewCharacterMovementComponent_IsMantling, "IsMantling" }, // 2485170993
 		{ &Z_Construct_UFunction_UNewCharacterMovementComponent_IsMovementMode, "IsMovementMode" }, // 1180758356
 		{ &Z_Construct_UFunction_UNewCharacterMovementComponent_IsProning, "IsProning" }, // 2954194083
@@ -7042,6 +7902,27 @@ void FOnFastSwimStop_DelegateWrapper(const FMulticastScriptDelegate& OnFastSwimS
 #endif
 	const UECodeGen_Private::FMulticastDelegatePropertyParams Z_Construct_UClass_UNewCharacterMovementComponent_Statics::NewProp_OnFastSwimStop = { "OnFastSwimStop", nullptr, (EPropertyFlags)0x0010000010080004, UECodeGen_Private::EPropertyGenFlags::InlineMulticastDelegate, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UNewCharacterMovementComponent, OnFastSwimStop), Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnFastSwimStop__DelegateSignature, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UNewCharacterMovementComponent_Statics::NewProp_OnFastSwimStop_MetaData), Z_Construct_UClass_UNewCharacterMovementComponent_Statics::NewProp_OnFastSwimStop_MetaData) }; // 250771799
 #if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UNewCharacterMovementComponent_Statics::NewProp_OnCustomAdvancedMovementStart_MetaData[] = {
+		{ "Category", "Character Movement|Advanced" },
+		{ "ModuleRelativePath", "Public/NewCharacterMovementComponent.h" },
+	};
+#endif
+	const UECodeGen_Private::FMulticastDelegatePropertyParams Z_Construct_UClass_UNewCharacterMovementComponent_Statics::NewProp_OnCustomAdvancedMovementStart = { "OnCustomAdvancedMovementStart", nullptr, (EPropertyFlags)0x0010000010080004, UECodeGen_Private::EPropertyGenFlags::InlineMulticastDelegate, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UNewCharacterMovementComponent, OnCustomAdvancedMovementStart), Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementStart__DelegateSignature, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UNewCharacterMovementComponent_Statics::NewProp_OnCustomAdvancedMovementStart_MetaData), Z_Construct_UClass_UNewCharacterMovementComponent_Statics::NewProp_OnCustomAdvancedMovementStart_MetaData) }; // 615260153
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UNewCharacterMovementComponent_Statics::NewProp_OnCustomAdvancedMovementInitialized_MetaData[] = {
+		{ "Category", "Character Movement|Advanced" },
+		{ "ModuleRelativePath", "Public/NewCharacterMovementComponent.h" },
+	};
+#endif
+	const UECodeGen_Private::FMulticastDelegatePropertyParams Z_Construct_UClass_UNewCharacterMovementComponent_Statics::NewProp_OnCustomAdvancedMovementInitialized = { "OnCustomAdvancedMovementInitialized", nullptr, (EPropertyFlags)0x0010000010080004, UECodeGen_Private::EPropertyGenFlags::InlineMulticastDelegate, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UNewCharacterMovementComponent, OnCustomAdvancedMovementInitialized), Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementInitialized__DelegateSignature, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UNewCharacterMovementComponent_Statics::NewProp_OnCustomAdvancedMovementInitialized_MetaData), Z_Construct_UClass_UNewCharacterMovementComponent_Statics::NewProp_OnCustomAdvancedMovementInitialized_MetaData) }; // 3981850919
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UNewCharacterMovementComponent_Statics::NewProp_OnCustomAdvancedMovementStop_MetaData[] = {
+		{ "Category", "Character Movement|Advanced" },
+		{ "ModuleRelativePath", "Public/NewCharacterMovementComponent.h" },
+	};
+#endif
+	const UECodeGen_Private::FMulticastDelegatePropertyParams Z_Construct_UClass_UNewCharacterMovementComponent_Statics::NewProp_OnCustomAdvancedMovementStop = { "OnCustomAdvancedMovementStop", nullptr, (EPropertyFlags)0x0010000010080004, UECodeGen_Private::EPropertyGenFlags::InlineMulticastDelegate, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UNewCharacterMovementComponent, OnCustomAdvancedMovementStop), Z_Construct_UDelegateFunction_CharacterLocomotionSystem_OnCustomAdvancedMovementStop__DelegateSignature, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UNewCharacterMovementComponent_Statics::NewProp_OnCustomAdvancedMovementStop_MetaData), Z_Construct_UClass_UNewCharacterMovementComponent_Statics::NewProp_OnCustomAdvancedMovementStop_MetaData) }; // 2788853231
+#if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UNewCharacterMovementComponent_Statics::NewProp_AdvancedMovementData_MetaData[] = {
 		{ "Category", "CharacterMovement|Advanced" },
 		{ "Comment", "/**\n\x09 * Reference to a data asset containing advanced movement configuration.\n\x09 * This asset holds various settings and parameters that influence the\n\x09 * character's advanced movement capabilities, allowing for easier\n\x09 * adjustments and customization.\n\x09 */" },
@@ -7574,6 +8455,9 @@ void FOnFastSwimStop_DelegateWrapper(const FMulticastScriptDelegate& OnFastSwimS
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UNewCharacterMovementComponent_Statics::NewProp_MaxFastSwimSpeed,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UNewCharacterMovementComponent_Statics::NewProp_OnFastSwimStart,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UNewCharacterMovementComponent_Statics::NewProp_OnFastSwimStop,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UNewCharacterMovementComponent_Statics::NewProp_OnCustomAdvancedMovementStart,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UNewCharacterMovementComponent_Statics::NewProp_OnCustomAdvancedMovementInitialized,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UNewCharacterMovementComponent_Statics::NewProp_OnCustomAdvancedMovementStop,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UNewCharacterMovementComponent_Statics::NewProp_AdvancedMovementData,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UNewCharacterMovementComponent_Statics::NewProp_WarpTargetLocations_Inner,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UNewCharacterMovementComponent_Statics::NewProp_WarpTargetLocations,
@@ -7663,6 +8547,7 @@ void FOnFastSwimStop_DelegateWrapper(const FMulticastScriptDelegate& OnFastSwimS
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
 	const FEnumRegisterCompiledInInfo Z_CompiledInDeferFile_FID_NewPlugin___5_3_CharacterLocomotionSystem_HostProject_Plugins_CharacterLocomotionSystem_Source_CharacterLocomotionSystem_Public_NewCharacterMovementComponent_h_Statics::EnumInfo[] = {
+		{ EMoveComponentBPFlags_StaticEnum, TEXT("EMoveComponentBPFlags"), &Z_Registration_Info_UEnum_EMoveComponentBPFlags, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 3604982465U) },
 		{ ECustomMovementMode_StaticEnum, TEXT("ECustomMovementMode"), &Z_Registration_Info_UEnum_ECustomMovementMode, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 3391710421U) },
 		{ ESlideExitMovementMode_StaticEnum, TEXT("ESlideExitMovementMode"), &Z_Registration_Info_UEnum_ESlideExitMovementMode, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 4042744916U) },
 		{ EWallSide_StaticEnum, TEXT("EWallSide"), &Z_Registration_Info_UEnum_EWallSide, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 1500685514U) },
@@ -7671,9 +8556,9 @@ void FOnFastSwimStop_DelegateWrapper(const FMulticastScriptDelegate& OnFastSwimS
 		{ FCurrentWallInfo::StaticStruct, Z_Construct_UScriptStruct_FCurrentWallInfo_Statics::NewStructOps, TEXT("CurrentWallInfo"), &Z_Registration_Info_UScriptStruct_CurrentWallInfo, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FCurrentWallInfo), 4176621624U) },
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_NewPlugin___5_3_CharacterLocomotionSystem_HostProject_Plugins_CharacterLocomotionSystem_Source_CharacterLocomotionSystem_Public_NewCharacterMovementComponent_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_UNewCharacterMovementComponent, UNewCharacterMovementComponent::StaticClass, TEXT("UNewCharacterMovementComponent"), &Z_Registration_Info_UClass_UNewCharacterMovementComponent, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UNewCharacterMovementComponent), 868351086U) },
+		{ Z_Construct_UClass_UNewCharacterMovementComponent, UNewCharacterMovementComponent::StaticClass, TEXT("UNewCharacterMovementComponent"), &Z_Registration_Info_UClass_UNewCharacterMovementComponent, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UNewCharacterMovementComponent), 3242001386U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_NewPlugin___5_3_CharacterLocomotionSystem_HostProject_Plugins_CharacterLocomotionSystem_Source_CharacterLocomotionSystem_Public_NewCharacterMovementComponent_h_2802852618(TEXT("/Script/CharacterLocomotionSystem"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_NewPlugin___5_3_CharacterLocomotionSystem_HostProject_Plugins_CharacterLocomotionSystem_Source_CharacterLocomotionSystem_Public_NewCharacterMovementComponent_h_3573053161(TEXT("/Script/CharacterLocomotionSystem"),
 		Z_CompiledInDeferFile_FID_NewPlugin___5_3_CharacterLocomotionSystem_HostProject_Plugins_CharacterLocomotionSystem_Source_CharacterLocomotionSystem_Public_NewCharacterMovementComponent_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_NewPlugin___5_3_CharacterLocomotionSystem_HostProject_Plugins_CharacterLocomotionSystem_Source_CharacterLocomotionSystem_Public_NewCharacterMovementComponent_h_Statics::ClassInfo),
 		Z_CompiledInDeferFile_FID_NewPlugin___5_3_CharacterLocomotionSystem_HostProject_Plugins_CharacterLocomotionSystem_Source_CharacterLocomotionSystem_Public_NewCharacterMovementComponent_h_Statics::ScriptStructInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_NewPlugin___5_3_CharacterLocomotionSystem_HostProject_Plugins_CharacterLocomotionSystem_Source_CharacterLocomotionSystem_Public_NewCharacterMovementComponent_h_Statics::ScriptStructInfo),
 		Z_CompiledInDeferFile_FID_NewPlugin___5_3_CharacterLocomotionSystem_HostProject_Plugins_CharacterLocomotionSystem_Source_CharacterLocomotionSystem_Public_NewCharacterMovementComponent_h_Statics::EnumInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_NewPlugin___5_3_CharacterLocomotionSystem_HostProject_Plugins_CharacterLocomotionSystem_Source_CharacterLocomotionSystem_Public_NewCharacterMovementComponent_h_Statics::EnumInfo));
