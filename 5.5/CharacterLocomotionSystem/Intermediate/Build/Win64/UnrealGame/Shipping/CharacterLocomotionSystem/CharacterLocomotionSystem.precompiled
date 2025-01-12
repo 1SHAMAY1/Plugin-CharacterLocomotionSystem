@@ -1,0 +1,14 @@
+{
+	"OutputFiles": [
+		"..\\..\\..\\x64\\UnrealGame\\Shipping\\CharacterLocomotionSystem\\Module.CharacterLocomotionSystem.1.cpp.obj",
+		"..\\..\\..\\x64\\UnrealGame\\Shipping\\CharacterLocomotionSystem\\Module.CharacterLocomotionSystem.2.cpp.obj",
+		"..\\..\\..\\x64\\UnrealGame\\Shipping\\CharacterLocomotionSystem\\AdvancedMovementPrimaryDataAsset.cpp.obj",
+		"..\\..\\..\\x64\\UnrealGame\\Shipping\\CharacterLocomotionSystem\\CharacterLocomotionSystem.cpp.obj",
+		"..\\..\\..\\x64\\UnrealGame\\Shipping\\CharacterLocomotionSystem\\ClimbUpPrimaryDataAsset.cpp.obj",
+		"..\\..\\..\\x64\\UnrealGame\\Shipping\\CharacterLocomotionSystem\\MantlePrimaryDataAsset.cpp.obj",
+		"..\\..\\..\\x64\\UnrealGame\\Shipping\\CharacterLocomotionSystem\\NewCharacter.cpp.obj",
+		"..\\..\\..\\x64\\UnrealGame\\Shipping\\CharacterLocomotionSystem\\NewCharacterMovementComponent.cpp.obj",
+		"..\\..\\..\\x64\\UnrealGame\\Shipping\\CharacterLocomotionSystem\\NewPlayerCameraManager.cpp.obj",
+		"..\\..\\..\\x64\\UnrealGame\\Shipping\\CharacterLocomotionSystem\\VaultPrimaryDataAsset.cpp.obj"
+	]
+}
