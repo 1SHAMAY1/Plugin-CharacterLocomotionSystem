@@ -2,7 +2,7 @@
 
 ## Overview
 The **Character Locomotion System** is an experimental Unreal Engine plugin designed to enhance character movement capabilities.  
-It is specifically tailored for versions **5.3** and **5.4**.  
+It is specifically tailored for versions from **5.3** to **5.5**.  
 This plugin introduces advanced movement modes such as **prone**, **slide**, **vault**, **climb**, **climb up**, **mantle**, **wall run**, and **dash**, allowing developers to create immersive and dynamic gameplay experiences.
 
 **Note:** As this plugin is experimental, it may cause issues or unexpected behavior during development.  
@@ -11,6 +11,7 @@ Users should thoroughly test all features in their projects.
 ## Supported Versions
 - **Unreal Engine 5.3**
 - **Unreal Engine 5.4**
+- **Unreal Engine 5.5**
 
 ## Test Project Showcase
 To facilitate testing and experimentation with the Character Locomotion System, a dedicated test project is provided.  
