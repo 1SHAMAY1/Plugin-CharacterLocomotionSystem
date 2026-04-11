@@ -63,6 +63,7 @@ To utilize the **Character Locomotion System**, you can choose between two prima
 ### 2. Feature Exploration
 A dedicated overview blueprint is included to showcase all available functions and logic hooks:
 `All > Plugins > CharacterLocomotionSystem Content > Overview > Blueprint > BP_NC_Overview`
+
 <img width="550" height="589" alt="image" src="https://github.com/user-attachments/assets/ddf75267-5129-405e-b75b-3759b5501de4" />
 
 ---
