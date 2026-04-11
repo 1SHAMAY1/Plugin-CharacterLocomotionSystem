@@ -48,28 +48,50 @@ Built-in support for dynamic eye-height adjustments ensuring a nauseous-free exp
 
 ---
 
-## 📋 Integration & Usage
+---
 
-### Supported Versions
-- **Unreal Engine 5.3**
-- **Unreal Engine 5.4**
-- **Unreal Engine 5.5**
+## 📋 Getting Started
 
-### Quick Start
-1. **Enable Plugins**: Ensure **Motion Warping** is enabled in your project.
-2. **Inherit**: Create a new Character Blueprint inheriting from `ANewCharacter`.
-3. **Configure**: Assign your custom Movement Data Assets to the character.
-4. **Input**: Bind the provided functions (e.g., `CrouchSprint`, `Vault`, `Prone`) to your Enhanced Input actions.
+### 1. Integration Methods
+To utilize the **Character Locomotion System**, you can choose between two primary integration paths:
+
+- **Create a Child Class**: Native inheritance allows for clean extension of all CLS features. Right-click in the Content Browser > Blueprint Class > Search and select `NewCharacter`.
+- **Change Parent Class**: For existing projects, open your character blueprint, go to **Class Settings**, and update the **Parent Class** to `NewCharacter`.
+
+### 2. Feature Exploration
+A dedicated overview blueprint is included to showcase all available functions and logic hooks:
+`All > Plugins > CharacterLocomotionSystem Content > Overview > Blueprint > BP_NC_Overview`
+
+---
+
+## 🛠️ Configuration & Data Assets
+
+CLS uses **Advanced Primary Data Assets** for high-fidelity control over movement states like Vault, Mantle, and Climb Up.
+
+### Editable Properties:
+| Property | Description |
+| :--- | :--- |
+| **Warp Target Offsets** | Precisely adjust landing/transition points relative to character root. |
+| **Warp Target Names** | Identifier strings for synchronized animation warping. |
+| **Movement Montage** | The core animation sequence used for the movement state. |
+| **Timing Controls** | Granular control over **Start Duration**, **Play Rate**, and **Blend Out Time**. |
+
+---
+
+## 🔍 Debugging & Level Design
+
+The plugin includes a robust set of debugging utilities to accelerate development:
+- **Real-time State Monitoring**: Toggle visual debuggers to track movement states and collision detection.
+- **Level Design Validation**: Streamline the placement of climbable and vaultable surfaces with instant visual feedback.
 
 ---
 
 ## 🔗 Resources
 
 > [!TIP]
-> Get started quickly by exploring the official sample project and deep-diving into the technical documentation.
+> The sample project provides a "Gold Standard" implementation that serves as an excellent reference for production-grade setups.
 
 - 📥 **[Sample Project Showcase](https://drive.google.com/drive/folders/1DdGjiWPIfIX7JbedweNz_dY-VXvpT5hz?usp=sharing)**
-- 📖 **[Technical Documentation (PDF)](https://docs.google.com/document/d/1ZGNJ7G3xG42ZnxNOpL2sVa1HN4Bb6B7Bkgt0RbDWhMM/edit?usp=sharing)**
 
 ---
 
@@ -79,4 +101,5 @@ Released under the **MIT License**.
 *Note: This system is in active development. While engineered for stability, extensive testing is recommended for production environments.*
 
 © 2024 Shankharaj Datta
+
 
