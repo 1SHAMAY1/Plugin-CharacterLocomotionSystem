@@ -57,13 +57,13 @@ To utilize the **Character Locomotion System**, you can choose between two prima
 
 - **Create a Child Class**: Native inheritance allows for clean extension of all CLS features. Right-click in the Content Browser > Blueprint Class > Search and select `NewCharacter`.
 - **Change Parent Class**: For existing projects, open your character blueprint, go to **Class Settings**, and update the **Parent Class** to `NewCharacter`.
-<img width="505" height="278" alt="image" src="https://github.com/user-attachments/assets/f84d02f3-e7bf-4f5c-b8c5-e5736a6c349c" />
+<img width="553" height="229" alt="image" src="https://github.com/user-attachments/assets/89f928cb-8809-49da-9a71-a7ceeb9e3577" />
 <img width="521" height="227" alt="image" src="https://github.com/user-attachments/assets/73d01547-9c18-46d4-be35-25022e0433fa" />
 
 ### 2. Feature Exploration
 A dedicated overview blueprint is included to showcase all available functions and logic hooks:
 `All > Plugins > CharacterLocomotionSystem Content > Overview > Blueprint > BP_NC_Overview`
-<img width="464" height="199" alt="image" src="https://github.com/user-attachments/assets/23242ee3-b960-485f-a533-6501ff714b2e" />
+<img width="550" height="589" alt="image" src="https://github.com/user-attachments/assets/ddf75267-5129-405e-b75b-3759b5501de4" />
 
 ---
 
@@ -78,7 +78,8 @@ CLS uses **Advanced Primary Data Assets** for high-fidelity control over movemen
 | **Warp Target Names** | Identifier strings for synchronized animation warping. |
 | **Movement Montage** | The core animation sequence used for the movement state. |
 | **Timing Controls** | Granular control over **Start Duration**, **Play Rate**, and **Blend Out Time**. |
-<img width="531" height="381" alt="image" src="https://github.com/user-attachments/assets/77964a11-afc9-4d79-aa57-7686d7829ff6" />
+<img width="516" height="178" alt="image" src="https://github.com/user-attachments/assets/4739e7ee-40b6-4f1b-b22f-7bf0c44ff9eb" />
+<img width="591" height="220" alt="image" src="https://github.com/user-attachments/assets/b06fc813-eff5-44d9-9756-30a791886ec0" />
 
 ---
 
@@ -87,7 +88,7 @@ CLS uses **Advanced Primary Data Assets** for high-fidelity control over movemen
 The plugin includes a robust set of debugging utilities to accelerate development:
 - **Real-time State Monitoring**: Toggle visual debuggers to track movement states and collision detection.
 - **Level Design Validation**: Streamline the placement of climbable and vaultable surfaces with instant visual feedback.
-<img width="519" height="187" alt="image" src="https://github.com/user-attachments/assets/f4982a7f-42a9-4b0e-91fb-5ce50f2eb9df" />
+<img width="283" height="270" alt="image" src="https://github.com/user-attachments/assets/36cfa422-c266-4895-b9a5-e05aecc2b9ab" />
 
 ---
 
