@@ -1,86 +1,82 @@
-# Plugin: Character Locomotion System
+# Character Locomotion System (CLS)
 
-## Overview
-The **Character Locomotion System** is an experimental Unreal Engine plugin designed to enhance character movement capabilities.  
-It is specifically tailored for versions from **5.3** to **5.5**.  
-This plugin introduces advanced movement modes such as **prone**, **slide**, **vault**, **climb**, **climb up**, **mantle**, **wall run**, and **dash**, allowing developers to create immersive and dynamic gameplay experiences.
+[![Unreal Engine](https://img.shields.io/badge/Unreal%20Engine-5.3%20%7C%205.4%20%7C%205.5-blue?logo=unrealengine&logoColor=white)](https://www.unrealengine.com/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Development Stage](https://img.shields.io/badge/Stage-Active%20Development-orange)](README.md)
+[![Multiplayer](https://img.shields.io/badge/Network-Fully%20Replicated-brightgreen)](README.md)
 
-**Note:** As this plugin is experimental, it may cause issues or unexpected behavior during development.  
-Users should thoroughly test all features in their projects.
+**Character Locomotion System (CLS)** is a high-performance, C++ based movement framework for Unreal Engine 5. Designed for AAA-grade fidelity and technical flexibility, CLS provides a robust foundation for advanced character traversal, featuring a data-driven architecture and native Motion Warping integration.
 
-## Supported Versions
+---
+
+## 🚀 Core Technical Pillars
+
+| Pillar | Description |
+| :--- | :--- |
+| **Data-Driven Workflow** | Utilize `PrimaryDataAsset` to configure Vault, Mantle, and Climb parameters without touching code. |
+| **Motion Warping** | Native integration with Epic's Motion Warping plugin for pixel-perfect environmental interactions. |
+| **C++ Performance** | Highly optimized `UNewCharacterMovementComponent` designed for low-latency and high scalability. |
+| **Multiplayer Ready** | Engineered with full predictive replication for synchronized gameplay in competitive environments. |
+
+---
+
+## 🕹️ Advanced Movement Modes
+
+The system extends the standard Unreal movement component to support a wide array of high-fidelity traversal states:
+
+- **🛡️ Prone & Slide**: Seamless transitions between standing, crouching, and prone. Dynamic sliding with custom eye-height adjustments.
+- **🧗 Advanced Climbing**: Comprehensive system for vertical navigation, including specialized **Climb Up** logic.
+- **🏃 Wall Run**: Dynamic surface detection for fluid horizontal and vertical wall traversal.
+- **⚡ Dash**: High-speed, directionally-aware bursts for combat and evasive maneuvers.
+- **🤸 Parkour (Vault & Mantle)**: Context-aware movement that smoothly blends animations using motion warping for realistic obstacle traversal.
+
+---
+
+## 🛠️ Technical Implementation
+
+### Motion Warping Integration
+CLS leverages `UMotionWarpingComponent` to ensure that parkour moves like vaulting and mantling land exactly where they should. Warp targets are dynamically updated based on the environment geometry.
+
+### Data Assets
+Movement configurations are decoupled from the character logic. By using `UVaultPrimaryDataAsset`, `UMantlePrimaryDataAsset`, and others, designers can:
+- Swap montages instantly.
+- Adjust playback rates and blend times.
+- Fine-tune warp target offsets per-move.
+
+### Smooth Camera Dynamics
+Built-in support for dynamic eye-height adjustments ensuring a nauseous-free experience during high-speed transitions like sliding or vaulting.
+
+---
+
+## 📋 Integration & Usage
+
+### Supported Versions
 - **Unreal Engine 5.3**
 - **Unreal Engine 5.4**
 - **Unreal Engine 5.5**
 
-## Test Project Showcase
-To facilitate testing and experimentation with the Character Locomotion System, a dedicated test project is provided.  
-This project showcases the features and functionalities of the plugin for both Unreal Engine versions.
+### Quick Start
+1. **Enable Plugins**: Ensure **Motion Warping** is enabled in your project.
+2. **Inherit**: Create a new Character Blueprint inheriting from `ANewCharacter`.
+3. **Configure**: Assign your custom Movement Data Assets to the character.
+4. **Input**: Bind the provided functions (e.g., `CrouchSprint`, `Vault`, `Prone`) to your Enhanced Input actions.
 
-You can find the sample project here:  
-**[Sample Project Showcase](https://drive.google.com/drive/folders/1DdGjiWPIfIX7JbedweNz_dY-VXvpT5hz?usp=sharing)**
+---
 
-## Project Documentation
-For detailed visual documentation of the project, including images and additional information,refer to the following PDF:
-**[Project Documentation](https://docs.google.com/document/d/1ZGNJ7G3xG42ZnxNOpL2sVa1HN4Bb6B7Bkgt0RbDWhMM/edit?usp=sharing)**
+## 🔗 Resources
 
-## Movement Modes
-The Character Locomotion System supports the following advanced movement modes:
+> [!TIP]
+> Get started quickly by exploring the official sample project and deep-diving into the technical documentation.
 
-- **Prone:**  
-  Allows characters to lie flat on the ground, enhancing stealth mechanics and cover utilization.
+- 📥 **[Sample Project Showcase](https://drive.google.com/drive/folders/1DdGjiWPIfIX7JbedweNz_dY-VXvpT5hz?usp=sharing)**
+- 📖 **[Technical Documentation (PDF)](https://docs.google.com/document/d/1ZGNJ7G3xG42ZnxNOpL2sVa1HN4Bb6B7Bkgt0RbDWhMM/edit?usp=sharing)**
 
-- **Slide:**  
-  Enables characters to perform a sliding action, useful for evasive maneuvers and fast-paced gameplay.
+---
 
-- **Vault:**  
-  Provides the ability to smoothly transition over obstacles, enhancing fluidity in movement.
+## 🏳️ License & Disclaimer
 
-- **Climb:**  
-  Allows characters to ascend vertical surfaces, adding verticality to gameplay.
+Released under the **MIT License**.  
+*Note: This system is in active development. While engineered for stability, extensive testing is recommended for production environments.*
 
-- **Climb Up:**  
-  A specialized movement for reaching higher platforms or ledges.
+© 2024 Shankharaj Datta
 
-- **Mantle:**  
-  Facilitates the transition from a lower position to a higher surface, seamlessly blending climbing and vaulting.
-
-- **Wall Run:**  
-  Enables characters to run along vertical surfaces, adding a dynamic element to navigation.
-
-- **Dash:**  
-  A quick burst of speed in a designated direction, ideal for dodging or closing gaps in combat.
-
-## Easy Integration and Extension
-
-### Seamless Integration
-The Character Locomotion System is designed for straightforward integration into existing Unreal Engine projects.  
-With minimal setup requirements, developers can quickly incorporate advanced movement mechanics without extensive modifications to their current architecture.  
-The plugin adheres to Unreal Engine’s best practices, ensuring compatibility with standard character movement systems.
-
-### Flexible Extension
-The plugin provides a robust framework that allows for easy extension of movement capabilities. Developers can:
-
-- **Add Custom Movement Modes:**  
-  Easily implement additional movement modes tailored to specific gameplay needs, leveraging the existing architecture.
-
-- **Modify Existing Features:**  
-  Adjust parameters and behaviors of current movement modes to suit the unique requirements of their game.
-
-### Multiplayer Support
-The Character Locomotion System is engineered with multiplayer functionality in mind:
-
-- **Replication-Friendly:**  
-  Movement modes are designed to be fully replicated, ensuring that all clients experience synchronized movement behavior. This is critical for competitive and cooperative gameplay.
-
-- **Customizable Synchronization:**  
-  Developers can extend or modify replication logic to tailor movement behavior for specific gameplay scenarios, allowing for both server-authoritative and client-predicted movement.
-
-- **Blueprint Integration:**  
-  The use of BlueprintNativeEvents allows for easy customization and behavior overrides, making it simpler for designers to tweak movement functionality without deep programming knowledge.
-
-## Summary
-With its experimental nature, seamless integration, flexible extension capabilities, and robust multiplayer support, the Character Locomotion System provides a comprehensive solution for enhancing character movement in Unreal Engine projects. 
-
-This plugin streamlines the implementation process and empowers developers to create dynamic and engaging gameplay experiences.  
-However, keep in mind that it is still in an experimental phase, and users may encounter issues or unexpected behaviors during development.
