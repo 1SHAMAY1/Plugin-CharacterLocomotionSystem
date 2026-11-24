@@ -103,6 +103,7 @@ flowchart TD
            ├── CharacterLocomotionSystem.uplugin
            ├── Binaries/
            ├── Content/
+           ├── Resources/
            └── Source/
    ```
 3. Open your project in Unreal Editor. Enable the plugin under **Edit > Plugins > Gameplay > CharacterLocomotionSystem**.
